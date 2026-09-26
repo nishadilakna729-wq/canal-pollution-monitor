@@ -107,7 +107,6 @@ body {
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
-/* SIMPLE INDEX INFO */
 .idx-box {
   background: #fefce8; border: 1px solid #fde68a;
   border-radius: 8px; padding: 10px; margin-bottom: 10px;
@@ -117,21 +116,21 @@ body {
   display: flex; align-items: center; gap: 6px;
 }
 .idx-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 0;
   border-bottom: 1px solid #fde68a;
 }
 .idx-row:last-child { border-bottom: none; }
 .idx-icon {
   width: 28px; height: 28px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; flex-shrink: 0;
+  font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
 }
-.idx-icon.mndwi { background: #dbeafe; }
-.idx-icon.ndwi { background: #dcfce7; }
+.idx-icon.ndwi { background: #dbeafe; }
+.idx-icon.mndwi { background: #e0e7ff; }
 .idx-icon.ndti { background: #fee2e2; }
 .idx-text strong { font-size: 0.72rem; color: #1e293b; display: block; }
-.idx-text span { font-size: 0.66rem; color: #64748b; }
+.idx-text span { font-size: 0.65rem; color: #64748b; line-height: 1.4; display: block; margin-top: 2px; }
 
 .layer-row {
   display: flex; align-items: center; gap: 8px;
@@ -277,7 +276,6 @@ body {
 <div class="main">
   <aside class="sidebar">
 
-    <!-- How to Report -->
     <div class="info-box">
       <h4><i class="fas fa-circle-info"></i> How to Report</h4>
       <div class="step"><span class="step-n">1</span><p>Click <strong>"Report Pollution"</strong> button</p></div>
@@ -285,31 +283,31 @@ body {
       <div class="step"><span class="step-n">3</span><p>Google Form opens with <strong>location filled</strong>. Submit!</p></div>
     </div>
 
-    <!-- Simple Index Explanations -->
+    <!-- CORRECTED Index Explanations -->
     <div class="idx-box">
       <h4><i class="fas fa-droplet"></i> What the Map Colours Show</h4>
 
       <div class="idx-row">
-        <div class="idx-icon mndwi">💧</div>
+        <div class="idx-icon ndwi">💧</div>
         <div class="idx-text">
-          <strong>MNDWI — Water Detection</strong>
-          <span>Blue = Water found &nbsp;|&nbsp; Red/Yellow = Dry land</span>
+          <strong>NDWI — Surface Water Detection</strong>
+          <span>Highlights surface water bodies using Green & NIR bands. Positive values (+) indicate water is present. Negative values (−) indicate land surface.</span>
         </div>
       </div>
 
       <div class="idx-row">
-        <div class="idx-icon ndwi">🌿</div>
+        <div class="idx-icon mndwi">🏙️</div>
         <div class="idx-text">
-          <strong>NDWI — Vegetation Moisture</strong>
-          <span>Green = Healthy plants &nbsp;|&nbsp; Brown = Dry plants</span>
+          <strong>MNDWI — Urban Water Mapping</strong>
+          <span>Better than NDWI for separating water from built-up urban areas using Green & SWIR bands. Positive values (+) indicate water. Especially useful for detecting canals in cities.</span>
         </div>
       </div>
 
       <div class="idx-row">
         <div class="idx-icon ndti">🟤</div>
         <div class="idx-text">
-          <strong>NDTI — Water Clarity</strong>
-          <span>Red = Dirty/Polluted water &nbsp;|&nbsp; Blue = Clean water</span>
+          <strong>NDTI — Water Turbidity</strong>
+          <span>Estimates how cloudy or sediment-loaded the water is using Red & Green bands. Higher positive values suggest more turbid (dirtier) water. Negative values suggest clearer water.</span>
         </div>
       </div>
     </div>
@@ -330,17 +328,17 @@ body {
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrMNDWI" checked/>
-          <label for="lyrMNDWI">MNDWI (Water Detection)</label>
+          <label for="lyrMNDWI">MNDWI (Urban Water Mapping)</label>
           <div class="ldot" style="background:linear-gradient(90deg,#d4380d,#fadb14,#1d39c4)"></div>
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrNDWI"/>
-          <label for="lyrNDWI">NDWI (Vegetation Moisture)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#ad6800,#73d13d,#135200)"></div>
+          <label for="lyrNDWI">NDWI (Surface Water)</label>
+          <div class="ldot" style="background:linear-gradient(90deg,#ad6800,#95de64,#1d39c4)"></div>
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrNDTI"/>
-          <label for="lyrNDTI">NDTI (Water Clarity)</label>
+          <label for="lyrNDTI">NDTI (Water Turbidity)</label>
           <div class="ldot" style="background:linear-gradient(90deg,#003a8c,#40a9ff,#faad14,#cf1322)"></div>
         </div>
         <div class="op-row">
@@ -388,7 +386,6 @@ body {
   </main>
 </div>
 
-<!-- REPORT MODAL -->
 <div class="modal-bg" id="reportModal">
   <div class="modal-box">
     <div class="modal-head">
@@ -416,36 +413,54 @@ body {
 <script>
 'use strict';
 
-// ============================================================
-// GOOGLE FORM (YOUR ENTRY IDS)
-// ============================================================
 var FORM_ID = '1FAIpQLSetOwEP6Sr3pJXCw7geq_5YBbuq3y5KcBtTCGC0AqSDEVW8rw';
 var FORM_BASE = 'https://docs.google.com/forms/d/e/' + FORM_ID + '/viewform?embedded=true';
 var ENTRY_LAT = 'entry.1267784781';
 var ENTRY_LNG = 'entry.2040321760';
 
-// ============================================================
-// STATE - NO SAMPLE DATA AT ALL
-// ============================================================
 var map;
 var clickMode = false;
 var clickMarker = null;
 var layers = {};
 
 // ============================================================
-// COLOR SCALES
+// CORRECTED COLOR SCALES
 // ============================================================
-var MNDWI_SCALE = [
-  {v:-1.0, c:'#d4380d'}, {v:-0.3, c:'#fa541c'},
-  {v:0.0, c:'#fadb14'}, {v:0.3, c:'#40a9ff'}, {v:1.0, c:'#1d39c4'}
-];
+
+// NDWI: Detects surface water (Green−NIR)/(Green+NIR)
+// Negative = land, Positive = water
+// Brown (land) -> Yellow (uncertain) -> Blue (water)
 var NDWI_SCALE = [
-  {v:-1.0, c:'#ad6800'}, {v:-0.2, c:'#d48806'},
-  {v:0.0, c:'#95de64'}, {v:0.3, c:'#52c41a'}, {v:1.0, c:'#135200'}
+  {v: -1.0, c: '#ad6800'},
+  {v: -0.1, c: '#d48806'},
+  {v:  0.0, c: '#fadb14'},
+  {v:  0.2, c: '#69c0ff'},
+  {v:  0.5, c: '#1d39c4'},
+  {v:  1.0, c: '#0a1f6b'}
 ];
+
+// MNDWI: Better water detection in urban areas (Green−SWIR)/(Green+SWIR)
+// Negative = built-up/land, Positive = water
+// Red/Orange (built-up) -> Yellow (uncertain) -> Blue (water)
+var MNDWI_SCALE = [
+  {v: -1.0, c: '#d4380d'},
+  {v: -0.1, c: '#fa541c'},
+  {v:  0.0, c: '#fadb14'},
+  {v:  0.2, c: '#69c0ff'},
+  {v:  0.5, c: '#1d39c4'},
+  {v:  1.0, c: '#0a1f6b'}
+];
+
+// NDTI: Water turbidity (Red−Green)/(Red+Green)
+// Negative = clearer water, Positive = more turbid/sediment
+// Deep Blue (clear) -> Light Blue -> Yellow -> Orange -> Red (turbid)
 var NDTI_SCALE = [
-  {v:-1.0, c:'#003a8c'}, {v:-0.2, c:'#40a9ff'},
-  {v:0.0, c:'#fff566'}, {v:0.3, c:'#faad14'}, {v:1.0, c:'#cf1322'}
+  {v: -1.0, c: '#003a8c'},
+  {v: -0.1, c: '#40a9ff'},
+  {v:  0.0, c: '#fff566'},
+  {v:  0.15, c: '#faad14'},
+  {v:  0.3, c: '#d4380d'},
+  {v:  1.0, c: '#820014'}
 ];
 
 // ============================================================
@@ -469,22 +484,33 @@ function getColor(v, scale) {
   return scale[0].c;
 }
 
+// ============================================================
+// CORRECTED INTERPRETATIONS
+// ============================================================
 function getMeaning(field, v) {
-  if (field === 'mndwi') {
-    if (v > 0.3) return 'Water body found';
-    if (v > 0.0) return 'Wet surface';
-    return 'Dry land';
-  }
   if (field === 'ndwi') {
-    if (v > 0.3) return 'Healthy vegetation';
-    if (v > 0.0) return 'Moderate moisture';
-    return 'Dry vegetation';
+    // NDWI: surface water detection
+    if (v > 0.5) return '🌊 Strong water signal';
+    if (v > 0.3) return '💧 Clear water signal';
+    if (v > 0.1) return '💧 Weak water signal';
+    if (v > 0.0) return '🔸 Very weak / uncertain';
+    return '🏜️ Non-water / Land surface';
+  }
+  if (field === 'mndwi') {
+    // MNDWI: water detection in urban areas
+    if (v > 0.5) return '🌊 Strong water signal';
+    if (v > 0.3) return '💧 Moderate water signal';
+    if (v > 0.1) return '💧 Possible water presence';
+    if (v > 0.0) return '🔸 Weak / uncertain signal';
+    return '🏙️ Built-up / Land / Non-water';
   }
   if (field === 'ndti') {
-    if (v > 0.3) return 'Very dirty water';
-    if (v > 0.1) return 'Somewhat dirty';
-    if (v > -0.1) return 'Slightly murky';
-    return 'Clean water';
+    // NDTI: water turbidity
+    if (v > 0.3) return '🟤 High turbidity (sediment-loaded)';
+    if (v > 0.15) return '🟡 Moderate turbidity';
+    if (v > 0.0) return '🔸 Low turbidity signal';
+    if (v > -0.1) return '💧 Relatively clear water';
+    return '🔵 Clear water (low turbidity)';
   }
   return '';
 }
@@ -587,7 +613,7 @@ function showToast(msg) {
 }
 
 // ============================================================
-// LOAD CSV (ONLY from data/ folder — NO fallback samples)
+// LOAD CSV (ONLY from data/ folder)
 // ============================================================
 function loadCSV(filename, field, scale, layerKey, checkboxId) {
   Papa.parse('data/' + filename, {
@@ -614,6 +640,14 @@ function renderIndex(pts, field, scale, layerKey, checkboxId) {
   var markers = [];
   var fu = field.toUpperCase();
 
+  // Correct full names for popup display
+  var fullNames = {
+    ndwi: 'NDWI — Surface Water Detection',
+    mndwi: 'MNDWI — Urban Water Mapping',
+    ndti: 'NDTI — Water Turbidity'
+  };
+  var fullName = fullNames[field] || fu;
+
   pts.forEach(function(p) {
     var lat = parseFloat(p.lat), lng = parseFloat(p.lng), v = parseFloat(p[field]);
     if (isNaN(lat) || isNaN(lng) || isNaN(v)) return;
@@ -626,11 +660,13 @@ function renderIndex(pts, field, scale, layerKey, checkboxId) {
     });
 
     c.bindPopup(
-      '<div style="min-width:170px">' +
-      '<div style="font-weight:700;font-size:0.85rem;margin-bottom:3px">' + fu + '</div>' +
-      '<div style="font-size:1.05rem;font-weight:800;color:' + col + ';margin-bottom:5px">' + v.toFixed(4) + '</div>' +
-      '<div style="font-size:0.74rem;color:#334155;padding:4px 7px;background:#f1f5f9;border-radius:4px;margin-bottom:5px">' + meaning + '</div>' +
-      '<div style="font-size:0.66rem;color:#64748b">📍 ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '</div>' +
+      '<div style="min-width:190px">' +
+      '<div style="font-weight:700;font-size:0.82rem;margin-bottom:4px;color:#0f172a">' + fullName + '</div>' +
+      '<div style="font-size:1.1rem;font-weight:800;color:' + col + ';margin-bottom:6px">' + v.toFixed(4) + '</div>' +
+      '<div style="font-size:0.75rem;color:#334155;padding:5px 8px;background:#f1f5f9;border-radius:5px;margin-bottom:5px">' +
+      meaning +
+      '</div>' +
+      '<div style="font-size:0.66rem;color:#64748b">📍 ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E</div>' +
       '</div>'
     );
     markers.push(c);
@@ -642,7 +678,7 @@ function renderIndex(pts, field, scale, layerKey, checkboxId) {
 }
 
 // ============================================================
-// LOAD GEOJSON (ONLY from data/ folder — NO fallback samples)
+// LOAD GEOJSON (ONLY from data/ folder — NO samples)
 // ============================================================
 function loadGeoJSON(filename, layerKey, styleFn, featureFn, checkboxId) {
   fetch('data/' + filename)
@@ -662,12 +698,12 @@ function loadGeoJSON(filename, layerKey, styleFn, featureFn, checkboxId) {
 }
 
 // ============================================================
-// LAYER TOGGLES
+// LAYER TOGGLES & OPACITY
 // ============================================================
 function setupToggles() {
-  var map2 = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti' };
-  Object.keys(map2).forEach(function(id) {
-    var key = map2[id];
+  var m = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti' };
+  Object.keys(m).forEach(function(id) {
+    var key = m[id];
     document.getElementById(id).addEventListener('change', function() {
       if (!layers[key]) return;
       this.checked ? map.addLayer(layers[key]) : map.removeLayer(layers[key]);
@@ -686,7 +722,7 @@ function setupOpacity() {
 }
 
 // ============================================================
-// INIT — LOADS ONLY YOUR REAL DATA FILES, NOTHING ELSE
+// INIT
 // ============================================================
 function init() {
   initMap();
@@ -698,7 +734,7 @@ function init() {
     if (e.target.id === 'reportModal') closeModal();
   });
 
-  // Load canals from YOUR file only
+  // Canals from YOUR file only
   loadGeoJSON('canals.geojson', 'canals',
     function(f) {
       var c = (f.properties || {}).condition || '';
@@ -718,7 +754,7 @@ function init() {
     'lyrCanals'
   );
 
-  // Load admin boundaries from YOUR file only (dark color)
+  // Admin boundaries from YOUR file only (dark color)
   loadGeoJSON('admin_boundaries.geojson', 'admin',
     function(f) {
       var lv = (f.properties||{}).level || (f.properties||{}).Level || '';
@@ -742,8 +778,7 @@ function init() {
   loadCSV('ndwi.csv', 'ndwi', NDWI_SCALE, 'ndwi', 'lyrNDWI');
   loadCSV('ndti.csv', 'ndti', NDTI_SCALE, 'ndti', 'lyrNDTI');
 
-  console.log('✅ Map ready — loads ONLY files from data/ folder');
-  console.log('   No sample/fake data included');
+  console.log('✅ Map ready — loads ONLY files from data/ folder. No sample data.');
 }
 
 document.addEventListener('DOMContentLoaded', init);
