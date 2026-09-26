@@ -117,8 +117,7 @@ body {
 }
 .idx-row {
   display: flex; align-items: flex-start; gap: 8px;
-  padding: 7px 0;
-  border-bottom: 1px solid #fde68a;
+  padding: 7px 0; border-bottom: 1px solid #fde68a;
 }
 .idx-row:last-child { border-bottom: none; }
 .idx-icon {
@@ -131,6 +130,22 @@ body {
 .idx-icon.ndti { background: #fee2e2; }
 .idx-text strong { font-size: 0.72rem; color: #1e293b; display: block; }
 .idx-text span { font-size: 0.65rem; color: #64748b; line-height: 1.4; display: block; margin-top: 2px; }
+
+/* REPORT COUNT */
+.report-count-box {
+  background: #fef2f2; border: 1px solid #fecaca;
+  border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.report-count-num {
+  font-size: 1.3rem; font-weight: 800; color: var(--danger);
+}
+.report-count-label {
+  font-size: 0.72rem; color: #991b1b; font-weight: 600;
+}
+.report-count-sub {
+  font-size: 0.64rem; color: #64748b;
+}
 
 .layer-row {
   display: flex; align-items: center; gap: 8px;
@@ -283,36 +298,41 @@ body {
       <div class="step"><span class="step-n">3</span><p>Google Form opens with <strong>location filled</strong>. Submit!</p></div>
     </div>
 
-    <!-- CORRECTED Index Explanations -->
+    <!-- Community Reports Count -->
+    <div class="report-count-box">
+      <i class="fas fa-flag" style="font-size:1.2rem;color:#e11d48"></i>
+      <div>
+        <div class="report-count-num" id="reportCount">0</div>
+        <div class="report-count-label">Community Reports</div>
+        <div class="report-count-sub">Auto-refreshes every 2 minutes</div>
+      </div>
+    </div>
+
     <div class="idx-box">
       <h4><i class="fas fa-droplet"></i> What the Map Colours Show</h4>
-
       <div class="idx-row">
         <div class="idx-icon ndwi">💧</div>
         <div class="idx-text">
           <strong>NDWI — Surface Water Detection</strong>
-          <span>Highlights surface water bodies using Green & NIR bands. Positive values (+) indicate water is present. Negative values (−) indicate land surface.</span>
+          <span>Shows where water is present. Blue = water, Brown = land.</span>
         </div>
       </div>
-
       <div class="idx-row">
         <div class="idx-icon mndwi">🏙️</div>
         <div class="idx-text">
           <strong>MNDWI — Urban Water Mapping</strong>
-          <span>Better than NDWI for separating water from built-up urban areas using Green & SWIR bands. Positive values (+) indicate water. Especially useful for detecting canals in cities.</span>
+          <span>Better at finding water in urban/built-up areas. Blue = water, Red = built-up land.</span>
         </div>
       </div>
-
       <div class="idx-row">
         <div class="idx-icon ndti">🟤</div>
         <div class="idx-text">
           <strong>NDTI — Water Turbidity</strong>
-          <span>Estimates how cloudy or sediment-loaded the water is using Red & Green bands. Higher positive values suggest more turbid (dirtier) water. Negative values suggest clearer water.</span>
+          <span>Shows how dirty the water is. Red = turbid/dirty, Blue = clear water.</span>
         </div>
       </div>
     </div>
 
-    <!-- Layers -->
     <div class="panel">
       <div class="panel-title"><i class="fas fa-layer-group"></i> Layers</div>
       <div class="panel-body">
@@ -328,18 +348,23 @@ body {
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrMNDWI" checked/>
-          <label for="lyrMNDWI">MNDWI (Urban Water Mapping)</label>
+          <label for="lyrMNDWI">MNDWI (Urban Water)</label>
           <div class="ldot" style="background:linear-gradient(90deg,#d4380d,#fadb14,#1d39c4)"></div>
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrNDWI"/>
           <label for="lyrNDWI">NDWI (Surface Water)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#ad6800,#95de64,#1d39c4)"></div>
+          <div class="ldot" style="background:linear-gradient(90deg,#ad6800,#fadb14,#1d39c4)"></div>
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrNDTI"/>
-          <label for="lyrNDTI">NDTI (Water Turbidity)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#003a8c,#40a9ff,#faad14,#cf1322)"></div>
+          <label for="lyrNDTI">NDTI (Turbidity)</label>
+          <div class="ldot" style="background:linear-gradient(90deg,#003a8c,#faad14,#cf1322)"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrReports" checked/>
+          <label for="lyrReports">Pollution Reports</label>
+          <div class="ldot" style="background:#e11d48"></div>
         </div>
         <div class="op-row">
           <label>Opacity</label>
@@ -349,7 +374,6 @@ body {
       </div>
     </div>
 
-    <!-- Base Maps -->
     <div class="panel">
       <div class="panel-title"><i class="fas fa-map"></i> Base Map</div>
       <div class="panel-body">
@@ -413,104 +437,114 @@ body {
 <script>
 'use strict';
 
+// ============================================================
+// CONFIGURATION
+// ============================================================
 var FORM_ID = '1FAIpQLSetOwEP6Sr3pJXCw7geq_5YBbuq3y5KcBtTCGC0AqSDEVW8rw';
 var FORM_BASE = 'https://docs.google.com/forms/d/e/' + FORM_ID + '/viewform?embedded=true';
 var ENTRY_LAT = 'entry.1267784781';
 var ENTRY_LNG = 'entry.2040321760';
 
+// ============================================================
+// ⚠️ REPLACE THIS URL WITH YOUR PUBLISHED GOOGLE SHEET CSV URL
+// ============================================================
+// Steps to get this URL:
+// 1. Open the Google Sheet linked to your form responses
+// 2. Click File → Share → Publish to web
+// 3. Select Sheet1 → CSV → Publish
+// 4. Copy the URL and paste it below
+var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRF80glRsS2_Pk00NjB28DJ0XmdfrT2_punPRyjGK3F9hZiN3lx7VCbsCiE9e7kzrl57X39DwIoWzXD/pub?output=csv';
+
+// How often to refresh reports (in milliseconds)
+// 120000 = 2 minutes
+var REFRESH_INTERVAL = 120000;
+
+// ============================================================
+// ⚠️ COLUMN NAME MAPPING
+// ============================================================
+// Check your Google Sheet column headers and update these
+// to match EXACTLY what your sheet shows
+//
+// Open your Google Sheet and look at Row 1 (the header row)
+// Then update the names below to match
+var COL = {
+  timestamp: 'Timestamp',          // Usually auto-created by Google Forms
+  lat: 'Latitude',                 // Your latitude column name
+  lng: 'Longitude',                // Your longitude column name
+  time: 'Time',                    // Time field
+  date: 'Date',                    // Date field
+  pollutionType: 'Pollution Type', // Pollution type field
+  severity: 'Severity Level',      // Severity field
+  description: 'Description'       // Any notes/description field
+};
+
+// ============================================================
+// STATE
+// ============================================================
 var map;
 var clickMode = false;
 var clickMarker = null;
 var layers = {};
+var reportData = [];
 
-// ============================================================
-// CORRECTED COLOR SCALES
-// ============================================================
-
-// NDWI: Detects surface water (Green−NIR)/(Green+NIR)
-// Negative = land, Positive = water
-// Brown (land) -> Yellow (uncertain) -> Blue (water)
-var NDWI_SCALE = [
-  {v: -1.0, c: '#ad6800'},
-  {v: -0.1, c: '#d48806'},
-  {v:  0.0, c: '#fadb14'},
-  {v:  0.2, c: '#69c0ff'},
-  {v:  0.5, c: '#1d39c4'},
-  {v:  1.0, c: '#0a1f6b'}
-];
-
-// MNDWI: Better water detection in urban areas (Green−SWIR)/(Green+SWIR)
-// Negative = built-up/land, Positive = water
-// Red/Orange (built-up) -> Yellow (uncertain) -> Blue (water)
+// Color scales
 var MNDWI_SCALE = [
-  {v: -1.0, c: '#d4380d'},
-  {v: -0.1, c: '#fa541c'},
-  {v:  0.0, c: '#fadb14'},
-  {v:  0.2, c: '#69c0ff'},
-  {v:  0.5, c: '#1d39c4'},
-  {v:  1.0, c: '#0a1f6b'}
+  {v:-1.0, c:'#d4380d'}, {v:-0.1, c:'#fa541c'},
+  {v:0.0, c:'#fadb14'}, {v:0.2, c:'#69c0ff'},
+  {v:0.5, c:'#1d39c4'}, {v:1.0, c:'#0a1f6b'}
 ];
-
-// NDTI: Water turbidity (Red−Green)/(Red+Green)
-// Negative = clearer water, Positive = more turbid/sediment
-// Deep Blue (clear) -> Light Blue -> Yellow -> Orange -> Red (turbid)
+var NDWI_SCALE = [
+  {v:-1.0, c:'#ad6800'}, {v:-0.1, c:'#d48806'},
+  {v:0.0, c:'#fadb14'}, {v:0.2, c:'#69c0ff'},
+  {v:0.5, c:'#1d39c4'}, {v:1.0, c:'#0a1f6b'}
+];
 var NDTI_SCALE = [
-  {v: -1.0, c: '#003a8c'},
-  {v: -0.1, c: '#40a9ff'},
-  {v:  0.0, c: '#fff566'},
-  {v:  0.15, c: '#faad14'},
-  {v:  0.3, c: '#d4380d'},
-  {v:  1.0, c: '#820014'}
+  {v:-1.0, c:'#003a8c'}, {v:-0.1, c:'#40a9ff'},
+  {v:0.0, c:'#fff566'}, {v:0.15, c:'#faad14'},
+  {v:0.3, c:'#d4380d'}, {v:1.0, c:'#820014'}
 ];
 
 // ============================================================
 // COLOR HELPERS
 // ============================================================
 function lerpColor(a, b, t) {
-  var ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
-  var ar = (ah>>16)&0xff, ag = (ah>>8)&0xff, ab = ah&0xff;
-  var br = (bh>>16)&0xff, bg = (bh>>8)&0xff, bb = bh&0xff;
-  return '#' + ((Math.round(ar+t*(br-ar))<<16)|(Math.round(ag+t*(bg-ag))<<8)|Math.round(ab+t*(bb-ab))).toString(16).padStart(6,'0');
+  var ah = parseInt(a.slice(1),16), bh = parseInt(b.slice(1),16);
+  var ar=(ah>>16)&0xff, ag=(ah>>8)&0xff, ab=ah&0xff;
+  var br=(bh>>16)&0xff, bg=(bh>>8)&0xff, bb=bh&0xff;
+  return '#'+((Math.round(ar+t*(br-ar))<<16)|(Math.round(ag+t*(bg-ag))<<8)|Math.round(ab+t*(bb-ab))).toString(16).padStart(6,'0');
 }
 
 function getColor(v, scale) {
   if (v <= scale[0].v) return scale[0].c;
   if (v >= scale[scale.length-1].v) return scale[scale.length-1].c;
-  for (var i = 0; i < scale.length-1; i++) {
-    if (v >= scale[i].v && v <= scale[i+1].v) {
-      return lerpColor(scale[i].c, scale[i+1].c, (v - scale[i].v) / (scale[i+1].v - scale[i].v));
-    }
+  for (var i=0; i<scale.length-1; i++) {
+    if (v >= scale[i].v && v <= scale[i+1].v)
+      return lerpColor(scale[i].c, scale[i+1].c, (v-scale[i].v)/(scale[i+1].v-scale[i].v));
   }
   return scale[0].c;
 }
 
-// ============================================================
-// CORRECTED INTERPRETATIONS
-// ============================================================
 function getMeaning(field, v) {
   if (field === 'ndwi') {
-    // NDWI: surface water detection
     if (v > 0.5) return '🌊 Strong water signal';
     if (v > 0.3) return '💧 Clear water signal';
     if (v > 0.1) return '💧 Weak water signal';
-    if (v > 0.0) return '🔸 Very weak / uncertain';
-    return '🏜️ Non-water / Land surface';
+    if (v > 0.0) return '🔸 Uncertain';
+    return '🏜️ Land surface';
   }
   if (field === 'mndwi') {
-    // MNDWI: water detection in urban areas
     if (v > 0.5) return '🌊 Strong water signal';
     if (v > 0.3) return '💧 Moderate water signal';
-    if (v > 0.1) return '💧 Possible water presence';
-    if (v > 0.0) return '🔸 Weak / uncertain signal';
-    return '🏙️ Built-up / Land / Non-water';
+    if (v > 0.1) return '💧 Possible water';
+    if (v > 0.0) return '🔸 Uncertain';
+    return '🏙️ Built-up / Land';
   }
   if (field === 'ndti') {
-    // NDTI: water turbidity
-    if (v > 0.3) return '🟤 High turbidity (sediment-loaded)';
+    if (v > 0.3) return '🟤 High turbidity';
     if (v > 0.15) return '🟡 Moderate turbidity';
-    if (v > 0.0) return '🔸 Low turbidity signal';
-    if (v > -0.1) return '💧 Relatively clear water';
-    return '🔵 Clear water (low turbidity)';
+    if (v > 0.0) return '🔸 Low turbidity';
+    if (v > -0.1) return '💧 Relatively clear';
+    return '🔵 Clear water';
   }
   return '';
 }
@@ -519,23 +553,12 @@ function getMeaning(field, v) {
 // MAP INIT
 // ============================================================
 function initMap() {
-  map = L.map('map', {
-    center: [6.935, 79.870],
-    zoom: 11,
-    maxZoom: 18,
-    minZoom: 8
-  });
+  map = L.map('map', { center:[6.935,79.870], zoom:11, maxZoom:18, minZoom:8 });
 
   layers.bm = {
-    osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19, attribution: '© OpenStreetMap'
-    }),
-    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 18, attribution: '© Esri'
-    }),
-    street: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, attribution: '© Esri'
-    })
+    osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom:19, attribution:'© OpenStreetMap' }),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom:18, attribution:'© Esri' }),
+    street: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { maxZoom:19, attribution:'© Esri' })
   };
   layers.bm.osm.addTo(map);
 
@@ -547,64 +570,58 @@ function initMap() {
   });
 
   map.on('mousemove', function(e) {
-    document.getElementById('cLat').textContent = 'Lat: ' + e.latlng.lat.toFixed(5);
-    document.getElementById('cLng').textContent = 'Lng: ' + e.latlng.lng.toFixed(5);
+    document.getElementById('cLat').textContent = 'Lat: '+e.latlng.lat.toFixed(5);
+    document.getElementById('cLng').textContent = 'Lng: '+e.latlng.lng.toFixed(5);
   });
   map.on('zoomend', function() {
-    document.getElementById('cZoom').textContent = 'Zoom: ' + map.getZoom();
+    document.getElementById('cZoom').textContent = 'Zoom: '+map.getZoom();
   });
 
   map.on('click', function(e) {
     if (!clickMode) return;
     if (clickMarker) map.removeLayer(clickMarker);
     clickMarker = L.circleMarker([e.latlng.lat, e.latlng.lng], {
-      radius: 9, fillColor: '#0284c7', color: '#fff', weight: 3, fillOpacity: 0.95
+      radius:9, fillColor:'#0284c7', color:'#fff', weight:3, fillOpacity:0.95
     }).addTo(map);
     cancelClick();
     showToast('Location captured! Opening form...');
     setTimeout(function() { openModal(e.latlng.lat, e.latlng.lng); }, 350);
   });
 
-  map.fitBounds([[6.48, 79.70], [7.28, 80.22]]);
+  map.fitBounds([[6.48,79.70],[7.28,80.22]]);
 }
 
 // ============================================================
 // MODAL & FORM
 // ============================================================
 function openModal(lat, lng) {
-  var latStr = lat.toFixed(6);
-  var lngStr = lng.toFixed(6);
-  document.getElementById('modalCoords').textContent = latStr + '°N, ' + lngStr + '°E';
-  var url = FORM_BASE + '&' + ENTRY_LAT + '=' + latStr + '&' + ENTRY_LNG + '=' + lngStr;
+  var la = lat.toFixed(6), ln = lng.toFixed(6);
+  document.getElementById('modalCoords').textContent = la+'°N, '+ln+'°E';
+  var url = FORM_BASE+'&'+ENTRY_LAT+'='+la+'&'+ENTRY_LNG+'='+ln;
   document.getElementById('gformFrame').src = url;
-  document.getElementById('formNewTab').href = url.replace('embedded=true', 'usp=pp_url');
+  document.getElementById('formNewTab').href = url.replace('embedded=true','usp=pp_url');
   document.getElementById('reportModal').classList.add('show');
 }
-
 function closeModal() {
   document.getElementById('reportModal').classList.remove('show');
   document.getElementById('gformFrame').src = 'about:blank';
   if (clickMarker) { map.removeLayer(clickMarker); clickMarker = null; }
 }
-
 function copyCoords() {
   var t = document.getElementById('modalCoords').textContent;
-  navigator.clipboard.writeText(t.replace('°N, ', ', ').replace('°E', ''));
+  navigator.clipboard.writeText(t.replace('°N, ',', ').replace('°E',''));
   showToast('Coordinates copied!');
 }
-
 function startClick() {
   clickMode = true;
   document.getElementById('clickBanner').classList.add('show');
   map.getContainer().style.cursor = 'crosshair';
 }
-
 function cancelClick() {
   clickMode = false;
   document.getElementById('clickBanner').classList.remove('show');
   map.getContainer().style.cursor = '';
 }
-
 function showToast(msg) {
   var el = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
@@ -613,60 +630,169 @@ function showToast(msg) {
 }
 
 // ============================================================
-// LOAD CSV (ONLY from data/ folder)
+// LOAD COMMUNITY REPORTS FROM GOOGLE SHEET
+// ============================================================
+function loadCommunityReports() {
+  if (SHEET_CSV_URL === 'YOUR_SHEET_CSV_URL') {
+    console.log('⚠️ No Google Sheet URL set. Update SHEET_CSV_URL in the code.');
+    console.log('   Reports layer will be empty until you set the URL.');
+    document.getElementById('reportCount').textContent = '0';
+    return;
+  }
+
+  Papa.parse(SHEET_CSV_URL, {
+    download: true,
+    header: true,
+    dynamicTyping: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      // Filter rows that have valid lat/lng
+      reportData = results.data.filter(function(row) {
+        // Try multiple possible column names for latitude
+        var lat = row[COL.lat] || row['Latitude'] || row['latitude'] || row['lat'];
+        var lng = row[COL.lng] || row['Longitude'] || row['longitude'] || row['lng'];
+        return lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng));
+      });
+
+      console.log('✅ Community reports loaded: ' + reportData.length + ' entries');
+      renderReports();
+    },
+    error: function(err) {
+      console.log('⚠️ Could not load Google Sheet. Check the URL.');
+      console.log('   Error: ' + err.message);
+    }
+  });
+}
+
+function renderReports() {
+  if (layers.reports) map.removeLayer(layers.reports);
+
+  var markers = [];
+
+  reportData.forEach(function(row, index) {
+    // Get coordinates - try multiple possible column names
+    var lat = parseFloat(row[COL.lat] || row['Latitude'] || row['latitude'] || row['lat']);
+    var lng = parseFloat(row[COL.lng] || row['Longitude'] || row['longitude'] || row['lng']);
+
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    // Get other details - try multiple possible names
+    var timestamp = row[COL.timestamp] || row['Timestamp'] || '';
+    var pollType = row[COL.pollutionType] || row['Pollution Type'] || row['pollution_type'] || 'Not specified';
+    var severity = row[COL.severity] || row['Severity Level'] || row['severity'] || 'Not specified';
+    var desc = row[COL.description] || row['Description'] || row['description'] || row['Notes'] || '';
+    var time = row[COL.time] || row['Time'] || row['time'] || '';
+    var date = row[COL.date] || row['Date'] || row['date'] || '';
+
+    // Determine marker color based on severity
+    var color = '#f59e0b'; // default yellow/medium
+    var sevLower = severity.toString().toLowerCase();
+    if (sevLower.indexOf('high') !== -1 || sevLower.indexOf('severe') !== -1) {
+      color = '#e11d48';
+    } else if (sevLower.indexOf('low') !== -1 || sevLower.indexOf('minor') !== -1) {
+      color = '#10b981';
+    }
+
+    // Create marker
+    var marker = L.circleMarker([lat, lng], {
+      radius: 8,
+      fillColor: color,
+      color: '#fff',
+      weight: 2.5,
+      fillOpacity: 0.9
+    });
+
+    // Build popup content
+    var popupHtml =
+      '<div style="min-width:200px">' +
+      '<div style="font-weight:700;font-size:0.88rem;color:#e11d48;margin-bottom:6px">' +
+      '⚠️ Pollution Report #' + (index + 1) +
+      '</div>';
+
+    if (pollType && pollType !== 'Not specified') {
+      popupHtml += '<div style="font-size:0.76rem;margin-bottom:4px">' +
+        '<strong>Type:</strong> ' + pollType + '</div>';
+    }
+    if (severity && severity !== 'Not specified') {
+      popupHtml += '<div style="font-size:0.76rem;margin-bottom:4px">' +
+        '<strong>Severity:</strong> <span style="color:' + color + ';font-weight:700">' + severity + '</span></div>';
+    }
+    if (date) {
+      popupHtml += '<div style="font-size:0.72rem;color:#64748b;margin-bottom:3px">' +
+        '📅 ' + date + (time ? ' at ' + time : '') + '</div>';
+    }
+    if (desc) {
+      popupHtml += '<div style="font-size:0.72rem;color:#334155;margin-top:5px;padding:5px 7px;background:#f1f5f9;border-radius:4px">' +
+        '📝 ' + desc + '</div>';
+    }
+    if (timestamp) {
+      popupHtml += '<div style="font-size:0.62rem;color:#94a3b8;margin-top:5px">' +
+        'Submitted: ' + timestamp + '</div>';
+    }
+
+    popupHtml +=
+      '<div style="font-size:0.65rem;color:#64748b;margin-top:5px">' +
+      '📍 ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E' +
+      '</div>' +
+      '</div>';
+
+    marker.bindPopup(popupHtml);
+    markers.push(marker);
+  });
+
+  layers.reports = L.layerGroup(markers);
+
+  // Add to map if checkbox is checked
+  var chk = document.getElementById('lyrReports');
+  if (chk && chk.checked) {
+    map.addLayer(layers.reports);
+  }
+
+  // Update count
+  document.getElementById('reportCount').textContent = reportData.length;
+}
+
+// ============================================================
+// LOAD INDEX CSV
 // ============================================================
 function loadCSV(filename, field, scale, layerKey, checkboxId) {
   Papa.parse('data/' + filename, {
-    download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
+    download:true, header:true, dynamicTyping:true, skipEmptyLines:true,
     complete: function(results) {
       var pts = results.data.filter(function(r) {
         return r.lat && r.lng && r[field] !== undefined && r[field] !== null && !isNaN(r[field]);
       });
       if (pts.length === 0) {
-        console.log('⚠️ ' + filename + ': No valid points. Need columns: lat, lng, ' + field);
+        console.log('⚠️ '+filename+': No valid points. Need columns: lat, lng, '+field);
         return;
       }
       renderIndex(pts, field, scale, layerKey, checkboxId);
-      console.log('✅ ' + filename + ': ' + pts.length + ' points loaded');
+      console.log('✅ '+filename+': '+pts.length+' points loaded');
     },
-    error: function() {
-      console.log('⚠️ ' + filename + ' not found in data/ folder.');
-    }
+    error: function() { console.log('⚠️ '+filename+' not found in data/ folder.'); }
   });
 }
 
 function renderIndex(pts, field, scale, layerKey, checkboxId) {
   if (layers[layerKey]) map.removeLayer(layers[layerKey]);
   var markers = [];
-  var fu = field.toUpperCase();
-
-  // Correct full names for popup display
-  var fullNames = {
-    ndwi: 'NDWI — Surface Water Detection',
-    mndwi: 'MNDWI — Urban Water Mapping',
-    ndti: 'NDTI — Water Turbidity'
-  };
-  var fullName = fullNames[field] || fu;
+  var names = { ndwi:'NDWI — Surface Water', mndwi:'MNDWI — Urban Water', ndti:'NDTI — Water Turbidity' };
+  var fullName = names[field] || field.toUpperCase();
 
   pts.forEach(function(p) {
-    var lat = parseFloat(p.lat), lng = parseFloat(p.lng), v = parseFloat(p[field]);
-    if (isNaN(lat) || isNaN(lng) || isNaN(v)) return;
-
+    var lat=parseFloat(p.lat), lng=parseFloat(p.lng), v=parseFloat(p[field]);
+    if (isNaN(lat)||isNaN(lng)||isNaN(v)) return;
     var col = getColor(v, scale);
     var meaning = getMeaning(field, v);
-
-    var c = L.circleMarker([lat, lng], {
-      radius: 6, fillColor: col, color: 'rgba(0,0,0,0.12)', weight: 1, fillOpacity: 0.85
+    var c = L.circleMarker([lat,lng], {
+      radius:6, fillColor:col, color:'rgba(0,0,0,0.12)', weight:1, fillOpacity:0.85
     });
-
     c.bindPopup(
-      '<div style="min-width:190px">' +
-      '<div style="font-weight:700;font-size:0.82rem;margin-bottom:4px;color:#0f172a">' + fullName + '</div>' +
-      '<div style="font-size:1.1rem;font-weight:800;color:' + col + ';margin-bottom:6px">' + v.toFixed(4) + '</div>' +
-      '<div style="font-size:0.75rem;color:#334155;padding:5px 8px;background:#f1f5f9;border-radius:5px;margin-bottom:5px">' +
-      meaning +
-      '</div>' +
-      '<div style="font-size:0.66rem;color:#64748b">📍 ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E</div>' +
+      '<div style="min-width:180px">'+
+      '<div style="font-weight:700;font-size:0.82rem;margin-bottom:3px">'+fullName+'</div>'+
+      '<div style="font-size:1.05rem;font-weight:800;color:'+col+';margin-bottom:5px">'+v.toFixed(4)+'</div>'+
+      '<div style="font-size:0.74rem;color:#334155;padding:4px 7px;background:#f1f5f9;border-radius:4px;margin-bottom:4px">'+meaning+'</div>'+
+      '<div style="font-size:0.65rem;color:#64748b">📍 '+lat.toFixed(5)+'°N, '+lng.toFixed(5)+'°E</div>'+
       '</div>'
     );
     markers.push(c);
@@ -678,30 +804,25 @@ function renderIndex(pts, field, scale, layerKey, checkboxId) {
 }
 
 // ============================================================
-// LOAD GEOJSON (ONLY from data/ folder — NO samples)
+// LOAD GEOJSON
 // ============================================================
 function loadGeoJSON(filename, layerKey, styleFn, featureFn, checkboxId) {
-  fetch('data/' + filename)
-    .then(function(r) {
-      if (!r.ok) throw new Error('Not found');
-      return r.json();
-    })
+  fetch('data/'+filename)
+    .then(function(r) { if (!r.ok) throw new Error('Not found'); return r.json(); })
     .then(function(gj) {
-      layers[layerKey] = L.geoJSON(gj, { style: styleFn, onEachFeature: featureFn });
+      layers[layerKey] = L.geoJSON(gj, { style:styleFn, onEachFeature:featureFn });
       var chk = document.getElementById(checkboxId);
       if (chk && chk.checked) map.addLayer(layers[layerKey]);
-      console.log('✅ ' + filename + ' loaded');
+      console.log('✅ '+filename+' loaded');
     })
-    .catch(function() {
-      console.log('⚠️ ' + filename + ' not found in data/ folder.');
-    });
+    .catch(function() { console.log('⚠️ '+filename+' not found in data/ folder.'); });
 }
 
 // ============================================================
 // LAYER TOGGLES & OPACITY
 // ============================================================
 function setupToggles() {
-  var m = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti' };
+  var m = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti', lyrReports:'reports' };
   Object.keys(m).forEach(function(id) {
     var key = m[id];
     document.getElementById(id).addEventListener('change', function() {
@@ -713,8 +834,8 @@ function setupToggles() {
 
 function setupOpacity() {
   document.getElementById('opSlider').addEventListener('input', function() {
-    document.getElementById('opVal').textContent = this.value + '%';
-    var op = this.value / 100;
+    document.getElementById('opVal').textContent = this.value+'%';
+    var op = this.value/100;
     ['mndwi','ndwi','ndti'].forEach(function(k) {
       if (layers[k]) layers[k].eachLayer(function(l) { if (l.setStyle) l.setStyle({fillOpacity:op}); });
     });
@@ -734,51 +855,55 @@ function init() {
     if (e.target.id === 'reportModal') closeModal();
   });
 
-  // Canals from YOUR file only
+  // Load canals
   loadGeoJSON('canals.geojson', 'canals',
     function(f) {
-      var c = (f.properties || {}).condition || '';
+      var c = (f.properties||{}).condition||'';
       var col = '#0284c7';
-      if (c === 'severely_polluted' || c === 'bad') col = '#e11d48';
-      else if (c === 'polluted' || c === 'poor') col = '#f97316';
-      else if (c === 'moderate') col = '#f59e0b';
-      else if (c === 'good') col = '#10b981';
-      return { color: col, weight: 3, opacity: 0.85 };
+      if (c==='severely_polluted'||c==='bad') col='#e11d48';
+      else if (c==='polluted'||c==='poor') col='#f97316';
+      else if (c==='moderate') col='#f59e0b';
+      else if (c==='good') col='#10b981';
+      return { color:col, weight:3, opacity:0.85 };
     },
     function(f, layer) {
-      var n = (f.properties||{}).name || (f.properties||{}).Name || (f.properties||{}).NAME || 'Canal';
-      layer.bindPopup('<strong>🌊 ' + n + '</strong>');
+      var n = (f.properties||{}).name||(f.properties||{}).Name||(f.properties||{}).NAME||'Canal';
+      layer.bindPopup('<strong>🌊 '+n+'</strong>');
       layer.on('mouseover', function() { this.setStyle({weight:5}); });
       layer.on('mouseout', function() { this.setStyle({weight:3}); });
     },
     'lyrCanals'
   );
 
-  // Admin boundaries from YOUR file only (dark color)
+  // Load admin boundaries (dark color)
   loadGeoJSON('admin_boundaries.geojson', 'admin',
     function(f) {
-      var lv = (f.properties||{}).level || (f.properties||{}).Level || '';
+      var lv = (f.properties||{}).level||(f.properties||{}).Level||'';
       return {
-        color: '#1e293b',
-        weight: lv === 'Province' ? 2.5 : 1.8,
-        fillColor: 'transparent',
-        dashArray: lv === 'Province' ? null : '6,4',
-        opacity: 0.8
+        color:'#1e293b', weight: lv==='Province'?2.5:1.8,
+        fillColor:'transparent', dashArray: lv==='Province'?null:'6,4', opacity:0.8
       };
     },
     function(f, layer) {
-      var n = (f.properties||{}).name || (f.properties||{}).Name || 'Boundary';
+      var n = (f.properties||{}).name||(f.properties||{}).Name||'Boundary';
       layer.bindTooltip(n);
     },
     'lyrAdmin'
   );
 
-  // Load index CSVs from YOUR files only
+  // Load indices
   loadCSV('mndwi.csv', 'mndwi', MNDWI_SCALE, 'mndwi', 'lyrMNDWI');
   loadCSV('ndwi.csv', 'ndwi', NDWI_SCALE, 'ndwi', 'lyrNDWI');
   loadCSV('ndti.csv', 'ndti', NDTI_SCALE, 'ndti', 'lyrNDTI');
 
-  console.log('✅ Map ready — loads ONLY files from data/ folder. No sample data.');
+  // Load community reports from Google Sheet
+  loadCommunityReports();
+
+  // Auto-refresh reports every 2 minutes
+  setInterval(loadCommunityReports, REFRESH_INTERVAL);
+
+  console.log('✅ Map ready!');
+  console.log('📋 Community reports auto-refresh every 2 minutes from Google Sheet');
 }
 
 document.addEventListener('DOMContentLoaded', init);
