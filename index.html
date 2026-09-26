@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Canal Pollution Monitor — Western Province</title>
+
+<!-- Leaflet (100% FREE - No API Key Needed) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Leaflet MarkerCluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<!-- Leaflet Heatmap -->
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+<!-- PapaParse CSV Parser -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --bg-main: #f1f5f9;
+  --bg-card: #ffffff;
+  --border-color: #cbd5e1;
+  --border-light: #e2e8f0;
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --text-dark: #0f172a;
+  --text-medium: #334155;
+  --text-muted: #64748b;
+  --danger: #e11d48;
+  --warning: #f59e0b;
+  --success: #10b981;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-dark);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* HEADER */
+.header {
+  background: #1e293b; /* Deep slate blue for balanced contrast */
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--primary);
+  flex-shrink: 0;
+  z-index: 600;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+}
+
+/* ADJUSTED TOPIC SIZE */
+.header h1 {
+  font-size: 1.35rem; /* Noticeably larger, clear, legible */
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+.header p {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.report-btn {
+  background: linear-gradient(135deg, #e11d48, #be123c);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 12px rgba(225, 29, 72, 0.35);
+  transition: all 0.25s ease;
+}
+.report-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(225, 29, 72, 0.45);
+}
+
+/* MAIN LAYOUT */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* SIDEBAR - SEMI-LIGHT */
+.sidebar {
+  width: 295px;
+  background: #f8fafc;
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 12px;
+  z-index: 500;
+}
+.sidebar::-webkit-scrollbar { width: 5px; }
+.sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+/* PANELS */
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 9px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+.panel-title {
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border-bottom: 1px solid var(--border-light);
+}
+.panel-title i { color: var(--primary); }
+.panel-body { padding: 10px 12px; }
+
+/* INSTRUCTIONS */
+.info-box {
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.info-box h4 {
+  font-size: 0.78rem;
+  color: #0369a1;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.info-box p {
+  font-size: 0.72rem;
+  color: #334155;
+  line-height: 1.4;
+}
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 5px;
+}
+.step-n {
+  background: #0284c7;
+  color: #fff;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* LAYERS ROWS */
+.layer-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.layer-row:last-child { border-bottom: none; }
+.layer-row label {
+  font-size: 0.76rem;
+  color: var(--text-medium);
+  cursor: pointer;
+  flex: 1;
+  font-weight: 500;
+}
+.layer-row input[type="checkbox"],
+.layer-row input[type="radio"] {
+  accent-color: var(--primary);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+.ldot {
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* OPACITY SLIDER */
+.op-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-light);
+}
+.op-row label { font-size: 0.72rem; color: var(--text-muted); width: 55px; }
+.op-row input[type="range"] { flex: 1; height: 4px; accent-color: var(--primary); }
+.op-row span { font-size: 0.7rem; color: var(--text-medium); width: 32px; text-align: right; }
+
+/* LEGEND */
+.leg-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.74rem;
+  color: var(--text-medium);
+}
+.leg-circle { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; flex-shrink: 0; }
+.leg-line { width: 20px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+.sbar { height: 9px; border-radius: 4px; margin: 4px 0 2px; }
+.slabs { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-muted); }
+
+/* STATS */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.stat-card {
+  background: #f8fafc;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+.stat-num { font-size: 1.2rem; font-weight: 700; color: var(--text-dark); margin-top: 2px; }
+.stat-card.high .stat-num { color: var(--danger); }
+.stat-card.med .stat-num { color: var(--warning); }
+.stat-card.low .stat-num { color: var(--success); }
+
+.chart-box { margin-bottom: 10px; }
+.chart-box h4 {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chart-wrap { height: 130px; position: relative; }
+
+/* MAP CONTAINER */
+.map-wrap {
+  flex: 1;
+  position: relative;
+  background: #e2e8f0;
+}
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* CLICK PROMPT BANNER */
+.click-banner {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 116, 144, 0.95);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 600;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(4px);
+}
+.click-banner.show { display: flex; animation: slideDown 0.3s ease; }
+.click-banner button {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.74rem;
+}
+@keyframes slideDown {
+  from { transform: translate(-50%, -15px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* FILTER BAR */
+.filter-bar {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-color);
+  border-radius: 30px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 500;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.filter-bar span { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+.fbtn {
+  padding: 4px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--border-light);
+  background: #f8fafc;
+  color: var(--text-medium);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fbtn:hover, .fbtn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+.fbtn.hr.active { background: var(--danger); border-color: var(--danger); }
+.fbtn.md.active { background: var(--warning); border-color: var(--warning); }
+.fbtn.lw.active { background: var(--success); border-color: var(--success); }
+
+/* COORDINATES BAR */
+.coord-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid var(--border-light);
+  padding: 4px 14px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  display: flex;
+  gap: 16px;
+  z-index: 500;
+}
+
+/* REPORT MODAL */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-bg.show { display: flex; }
+.modal-box {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 650px;
+  max-width: 95vw;
+  max-height: 92vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+.modal-head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+}
+.modal-head h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-head h2 i { color: var(--danger); }
+.modal-close {
+  background: none;
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+.modal-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+/* MODAL LOCATION BANNER */
+.loc-info {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #065f46;
+}
+.loc-coords { color: #047857; font-weight: 700; }
+.copy-btn {
+  background: #10b981;
+  border: none;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* FORM TABS */
+.form-tabs {
+  display: flex;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.form-tab {
+  flex: 1;
+  padding: 9px;
+  background: #f8fafc;
+  border: none;
+  color: var(--text-medium);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.form-tab.active { background: var(--primary); color: #fff; }
+.form-pane { display: none; }
+.form-pane.active { display: block; }
+.form-frame {
+  width: 100%;
+  height: 580px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #0f172a;
+  color: #fff;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 3000;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  transform: translateY(120px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* LEAFLET LIGHT THEME OVERRIDES */
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: var(--text-dark) !important;
+  border-radius: 9px !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+  border: 1px solid var(--border-light) !important;
+}
+.leaflet-popup-tip { background: #ffffff !important; }
+.leaflet-popup-content { margin: 12px 14px !important; font-size: 0.8rem !important; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="logo"><i class="fas fa-water"></i></div>
+    <div>
+      <h1>Canal Pollution Monitor — Western Province</h1>
+      <p>Community-Based Urban Canal Pollution Reporting & Environmental Monitoring</p>
+    </div>
+  </div>
+  <button class="report-btn" id="btnReport"><i class="fas fa-map-marker-alt"></i> Report Pollution</button>
+</header>
+
+<!-- MAIN CONTAINER -->
+<div class="main">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- How to Report Instructions -->
+    <div class="info-box">
+      <h4><i class="fas fa-circle-info"></i> How to Report a Hotspot</h4>
+      <div class="step"><span class="step-n">1</span><p>Click <strong>"Report Pollution"</strong> in the top header</p></div>
+      <div class="step"><span class="step-n">2</span><p>Click on the <strong>exact canal location</strong> on the map</p></div>
+      <div class="step"><span class="step-n">3</span><p>Your Google Form will open with <strong>Latitude and Longitude already filled</strong>!</p></div>
+    </div>
+
+    <!-- Map Layers -->
+    <div class="panel">
+      <div class="panel-title"><i class="fas fa-layer-group"></i> Environmental Layers</div>
+      <div class="panel-body">
+        <div class="layer-row">
+          <input type="checkbox" id="lyrCanals" checked/>
+          <label for="lyrCanals">Canal Network (OSM)</label>
+          <div class="ldot" style="background:#0284c7"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrWetlands" checked/>
+          <label for="lyrWetlands">Wetland Ecosystems</label>
+          <div class="ldot" style="background:#10b981"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrAdmin" checked/>
+          <label for="lyrAdmin">Admin Boundaries</label>
+          <div class="ldot" style="background:transparent;border:1px dashed #e11d48"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrMNDWI" checked/>
+          <label for="lyrMNDWI">MNDWI (Water Index)</label>
+          <div class="ldot" style="background:linear-gradient(90deg,#8B0000,#FFD700,#00008B)"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrNDWI"/>
+          <label for="lyrNDWI">NDWI (Veg Moisture)</label>
+          <div class="ldot" style="background:linear-gradient(90deg,#8B4513,#90EE90,#006400)"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrNDTI"/>
+          <label for="lyrNDTI">NDTI (Turbidity Index)</label>
+          <div class="ldot" style="background:linear-gradient(90deg,#1a237e,#ff6f00,#b71c1c)"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrReports" checked/>
+          <label for="lyrReports">Community Incidents</label>
+          <div class="ldot" style="background:#e11d48"></div>
+        </div>
+        <div class="layer-row">
+          <input type="checkbox" id="lyrHeat" checked/>
+          <label for="lyrHeat">Pollution Heatmap</label>
+          <div class="ldot" style="background:linear-gradient(90deg,blue,lime,red)"></div>
+        </div>
+
+        <div class="op-row">
+          <label>Opacity</label>
+          <input type="range" id="opSlider" min="10" max="100" value="80"/>
+          <span id="opVal">80%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guaranteed Working Base Maps (NO API KEY) -->
+    <div class="panel">
+      <div class="panel-title"><i class="fas fa-map"></i> Base Map Canvas</div>
+      <div class="panel-body">
+        <div class="layer-row">
+          <input type="radio" name="bm" value="osm" checked id="bm_osm"/>
+          <label for="bm_osm">OpenStreetMap Standard</label>
+        </div>
+        <div class="layer-row">
+          <input type="radio" name="bm" value="satellite" id="bm_sat"/>
+          <label for="bm_sat">Esri World Imagery (Satellite)</label>
+        </div>
+        <div class="layer-row">
+          <input type="radio" name="bm" value="street" id="bm_street"/>
+          <label for="bm_street">Esri Topo / Street Canvas</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spatial Legend -->
+    <div class="panel">
+      <div class="panel-title"><i class="fas fa-palette"></i> Map Legend</div>
+      <div class="panel-body">
+        <div style="font-size:0.68rem;color:var(--text-muted);font-weight:700;margin-bottom:5px">CANAL FLOW CONDITION</div>
+        <div class="leg-item"><div class="leg-line" style="background:#10b981"></div><span>Good Flow</span></div>
+        <div class="leg-item"><div class="leg-line" style="background:#f59e0b"></div><span>Moderate Stagnation</span></div>
+        <div class="leg-item"><div class="leg-line" style="background:#e11d48;border-bottom:1px dashed"></div><span>Severe Blockage</span></div>
+
+        <div style="font-size:0.68rem;color:var(--text-muted);font-weight:700;margin:10px 0 5px">HOTSPOT SEVERITY</div>
+        <div class="leg-item"><div class="leg-circle" style="background:#e11d48;border-color:#be123c"></div><span>High Severity</span></div>
+        <div class="leg-item"><div class="leg-circle" style="background:#f59e0b;border-color:#b45309"></div><span>Medium Severity</span></div>
+        <div class="leg-item"><div class="leg-circle" style="background:#10b981;border-color:#047857"></div><span>Low Severity</span></div>
+
+        <div style="font-size:0.68rem;color:var(--text-muted);font-weight:700;margin:10px 0 5px">MNDWI (WATER PROXY)</div>
+        <div class="sbar" style="background:linear-gradient(90deg,#8B0000,#FF4500,#FFD700,#00CED1,#00008B)"></div>
+        <div class="slabs"><span>-1.0 (Dry)</span><span>0.0</span><span>+1.0 (Water)</span></div>
+
+        <div style="font-size:0.68rem;color:var(--text-muted);font-weight:700;margin:10px 0 5px">NDTI (TURBIDITY PROXY)</div>
+        <div class="sbar" style="background:linear-gradient(90deg,#1a237e,#4fc3f7,#fff176,#ff6f00,#b71c1c)"></div>
+        <div class="slabs"><span>-1.0 (Clear)</span><span>0.0</span><span>+1.0 (Turbid)</span></div>
+      </div>
+    </div>
+
+    <!-- Decision Support Statistics -->
+    <div class="panel">
+      <div class="panel-title"><i class="fas fa-chart-pie"></i> Incident Metrics</div>
+      <div class="panel-body">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total</div><div class="stat-num" id="sTotal">0</div></div>
+          <div class="stat-card high"><div class="stat-label">High</div><div class="stat-num" id="sHigh">0</div></div>
+          <div class="stat-card med"><div class="stat-label">Medium</div><div class="stat-num" id="sMed">0</div></div>
+          <div class="stat-card low"><div class="stat-label">Low</div><div class="stat-num" id="sLow">0</div></div>
+        </div>
+        <div class="chart-box">
+          <h4><i class="fas fa-pie-chart"></i> Types Breakdown</h4>
+          <div class="chart-wrap"><canvas id="chartType"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <h4><i class="fas fa-chart-bar"></i> Severity Levels</h4>
+          <div class="chart-wrap"><canvas id="chartSev"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAP STAGE -->
+  <main class="map-wrap">
+    <div id="map"></div>
+
+    <!-- On-screen prompt when "Report Pollution" is active -->
+    <div class="click-banner" id="clickBanner">
+      <i class="fas fa-crosshairs fa-spin"></i>
+      Click anywhere along the canal network to mark pollution
+      <button onclick="cancelClick()">Cancel</button>
+    </div>
+
+    <!-- Severity Filter Bar -->
+    <div class="filter-bar">
+      <span>Filter Hotspots:</span>
+      <button class="fbtn active" data-f="all">All</button>
+      <button class="fbtn hr" data-f="high">High</button>
+      <button class="fbtn md" data-f="medium">Medium</button>
+      <button class="fbtn lw" data-f="low">Low</button>
+    </div>
+
+    <!-- Bottom Coordinates Info -->
+    <div class="coord-bar">
+      <span><i class="fas fa-location-dot" style="color:var(--primary)"></i> <span id="cLat">Lat: 6.92710</span>, <span id="cLng">Lng: 79.86120</span></span>
+      <span id="cZoom">Zoom: 11</span>
+      <span>Western Province Canal GIS • WGS84</span>
+    </div>
+  </main>
+</div>
+
+<!-- REPORT MODAL (Auto-fills your Google Form) -->
+<div class="modal-bg" id="reportModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2><i class="fas fa-triangle-exclamation"></i> Canal Pollution Report Portal</h2>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="loc-info">
+        <div><i class="fas fa-map-pin"></i> Captured Location: <span class="loc-coords" id="modalCoords">—</span></div>
+        <button class="copy-btn" onclick="copyCoords()"><i class="fas fa-copy"></i> Copy Coordinates</button>
+      </div>
+
+      <div class="form-tabs">
+        <button class="form-tab active" data-tab="gform"><i class="fab fa-google"></i> Google Form (Live Embed)</button>
+        <button class="form-tab" data-tab="quick"><i class="fas fa-bolt"></i> Instant In-Map Test</button>
+      </div>
+
+      <!-- GOOGLE FORM (Exact Entry IDs Pre-Filled) -->
+      <div class="form-pane active" id="pane-gform">
+        <iframe id="gformFrame" class="form-frame" src="about:blank"></iframe>
+        <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+          <small style="color:var(--text-muted);font-size:0.72rem">Latitude & Longitude auto-filled into form fields.</small>
+          <a id="formNewTab" href="#" target="_blank" style="color:var(--primary);font-size:0.75rem;font-weight:600;text-decoration:none">
+            <i class="fas fa-external-link-alt"></i> Open Form in Full Window
+          </a>
+        </div>
+      </div>
+
+      <!-- QUICK IN-BROWSER FALLBACK FORM -->
+      <div class="form-pane" id="pane-quick">
+        <form id="quickForm" onsubmit="submitQuick(event)">
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.75rem;font-weight:600;color:var(--text-medium);display:block;margin-bottom:4px">Canal Name</label>
+            <select id="qCanal" style="width:100%;padding:8px 10px;background:#f8fafc;border:1px solid var(--border-color);border-radius:6px;font-size:0.8rem">
+              <option>Colombo Main Canal</option>
+              <option>Hamilton Canal</option>
+              <option>Dematagoda Canal</option>
+              <option>Mutwal Canal</option>
+              <option>Wellawatte Canal</option>
+              <option>Dehiwala Canal</option>
+              <option>Kirulapone Canal</option>
+              <option>Other / Unnamed Branch</option>
+            </select>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.75rem;font-weight:600;color:var(--text-medium);display:block;margin-bottom:4px">Pollution Type</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <label style="font-size:0.75rem;display:flex;align-items:center;gap:6px"><input type="checkbox" name="qt" value="Plastic" checked/> Plastic/Solid Waste</label>
+              <label style="font-size:0.75rem;display:flex;align-items:center;gap:6px"><input type="checkbox" name="qt" value="Sewage"/> Sewage Discharge</label>
+              <label style="font-size:0.75rem;display:flex;align-items:center;gap:6px"><input type="checkbox" name="qt" value="Industrial"/> Industrial Chemical</label>
+              <label style="font-size:0.75rem;display:flex;align-items:center;gap:6px"><input type="checkbox" name="qt" value="Blockage"/> Severe Blockage</label>
+            </div>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.75rem;font-weight:600;color:var(--text-medium);display:block;margin-bottom:4px">Severity Level</label>
+            <select id="qSev" style="width:100%;padding:8px 10px;background:#f8fafc;border:1px solid var(--border-color);border-radius:6px;font-size:0.8rem">
+              <option value="high">🔴 High (Severe pollution, dark water, blocked flow)</option>
+              <option value="medium" selected>🟡 Medium (Noticeable smell, waste)</option>
+              <option value="low">🟢 Low (Minor floating debris)</option>
+            </select>
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:0.75rem;font-weight:600;color:var(--text-medium);display:block;margin-bottom:4px">Notes / Details</label>
+            <textarea id="qNotes" rows="2" style="width:100%;padding:8px 10px;background:#f8fafc;border:1px solid var(--border-color);border-radius:6px;font-size:0.8rem;resize:vertical" placeholder="Describe the conditions..."></textarea>
+          </div>
+          <button type="submit" style="width:100%;padding:10px;background:var(--primary);border:none;border-radius:7px;color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer">
+            <i class="fas fa-paper-plane"></i> Save Incident Directly to Map
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fas fa-circle-check" style="color:#10b981"></i> <span id="toastMsg">Location saved!</span></div>
+
+<script>
+'use strict';
+
+// ============================================================
+// GOOGLE FORM IDENTIFIERS (EXTRACTED FROM YOUR FORM URL)
+// ============================================================
+const FORM_ID = '1FAIpQLSetOwEP6Sr3pJXCw7geq_5YBbuq3y5KcBtTCGC0AqSDEVW8rw';
+const FORM_BASE = 'https://docs.google.com/forms/d/e/' + FORM_ID + '/viewform?embedded=true';
+
+// Exact prefill keys for Latitude and Longitude
+const ENTRY_LAT = 'entry.1267784781';
+const ENTRY_LNG = 'entry.2040321760';
+
+// ============================================================
+// MAP CONFIGURATION & BULLETPROOF TILE PROVIDERS
+// ============================================================
+let map, clickMode = false, clickMarker = null, selectedCoords = null;
+const layers = {};
+const data = { mndwi: [], ndwi: [], ndti: [], reports: [] };
+let chartType = null, chartSev = null;
+
+function initMap() {
+  map = L.map('map', {
+    center: [6.935, 79.870],
+    zoom: 11,
+    maxZoom: 18,
+    minZoom: 8,
+    attributionControl: false
+  });
+
+  // FIXED TILE PROVIDERS: Bulletproof URLs with crossOrigin & subdomains configured
+  layers.bm = {
+    // 1. OpenStreetMap Standard (Fast, free, no API key)
+    osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      subdomains: ['a', 'b', 'c'],
+      crossOrigin: true
+    }),
+
+    // 2. Esri World Imagery (Satellite) - works reliably everywhere
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 18,
+      crossOrigin: true
+    }),
+
+    // 3. Esri World Topo / Street (Clean vector-style raster, 100% free)
+    street: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      crossOrigin: true
+    })
+  };
+
+  // Default basemap
+  layers.bm.osm.addTo(map);
+
+  // Basemap switch listener
+  document.querySelectorAll('input[name="bm"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      Object.values(layers.bm).forEach(lyr => map.removeLayer(lyr));
+      if (layers.bm[this.value]) {
+        layers.bm[this.value].addTo(map);
+      }
+    });
+  });
+
+  // Track coordinates on mousemove
+  map.on('mousemove', e => {
+    document.getElementById('cLat').textContent = 'Lat: ' + e.latlng.lat.toFixed(5);
+    document.getElementById('cLng').textContent = 'Lng: ' + e.latlng.lng.toFixed(5);
+  });
+  map.on('zoomend', () => {
+    document.getElementById('cZoom').textContent = 'Zoom: ' + map.getZoom();
+  });
+
+  // Interactive Click-to-Report Handler
+  map.on('click', e => {
+    if (!clickMode) return;
+    selectedCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
+
+    if (clickMarker) map.removeLayer(clickMarker);
+    clickMarker = L.circleMarker([e.latlng.lat, e.latlng.lng], {
+      radius: 9,
+      fillColor: '#0284c7',
+      color: '#fff',
+      weight: 3,
+      fillOpacity: 0.95
+    }).addTo(map);
+
+    cancelClick();
+    showToast('Location captured! Opening report form...');
+    setTimeout(() => openModal(e.latlng.lat, e.latlng.lng), 350);
+  });
+
+  map.fitBounds([[6.48, 79.70], [7.28, 80.22]]);
+}
+
+// ============================================================
+// GOOGLE FORM AUTO-FILL
+// ============================================================
+function openModal(lat, lng) {
+  const latStr = lat.toFixed(6);
+  const lngStr = lng.toFixed(6);
+  document.getElementById('modalCoords').textContent = latStr + '°N, ' + lngStr + '°E';
+
+  // Construct auto-filled Google Form URL
+  const formURL = FORM_BASE + '&' + ENTRY_LAT + '=' + latStr + '&' + ENTRY_LNG + '=' + lngStr;
+
+  document.getElementById('gformFrame').src = formURL;
+  document.getElementById('formNewTab').href = formURL.replace('embedded=true', 'usp=pp_url');
+  document.getElementById('reportModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('reportModal').classList.remove('show');
+  document.getElementById('gformFrame').src = 'about:blank';
+  if (clickMarker) {
+    map.removeLayer(clickMarker);
+    clickMarker = null;
+  }
+}
+
+function copyCoords() {
+  const txt = document.getElementById('modalCoords').textContent;
+  navigator.clipboard.writeText(txt.replace('°N, ', ', ').replace('°E', ''));
+  showToast('Coordinates copied to clipboard!');
+}
+
+function startClick() {
+  clickMode = true;
+  document.getElementById('clickBanner').classList.add('show');
+  map.getContainer().style.cursor = 'crosshair';
+}
+
+function cancelClick() {
+  clickMode = false;
+  document.getElementById('clickBanner').classList.remove('show');
+  map.getContainer().style.cursor = '';
+}
+
+// ============================================================
+// CSV DATA LOADING (MNDWI, NDWI, NDTI from data/ folder)
+// ============================================================
+function loadCSV(filename, field, scale, layerKey) {
+  Papa.parse('data/' + filename, {
+    download: true,
+    header: true,
+    dynamicTyping: true,
+    complete: function(results) {
+      const pts = results.data.filter(r => r.lat && r.lng && r[field] !== undefined);
+      data[field] = pts;
+      renderIndexLayer(pts, field, scale, layerKey);
+      console.log('✅ ' + filename + ' successfully loaded: ' + pts.length + ' points');
+    },
+    error: function() {
+      console.log('⚠️ ' + filename + ' not found in data/ folder. Using fallback simulation.');
+      const sample = genSample(field);
+      data[field] = sample;
+      renderIndexLayer(sample, field, scale, layerKey);
+    }
+  });
+}
+
+function renderIndexLayer(pts, field, scale, layerKey) {
+  if (layers[layerKey]) map.removeLayer(layers[layerKey]);
+  const markers = [];
+  pts.forEach(p => {
+    if (isNaN(p.lat) || isNaN(p.lng)) return;
+    const v = parseFloat(p[field]);
+    if (isNaN(v)) return;
+    const c = getColor(v, scale);
+    const m = L.circleMarker([p.lat, p.lng], {
+      radius: 6,
+      fillColor: c,
+      color: 'rgba(255,255,255,0.2)',
+      weight: 1,
+      fillOpacity: 0.8
+    });
+    m.bindTooltip('<strong>' + field.toUpperCase() + ':</strong> ' + v.toFixed(4), { direction: 'top' });
+    markers.push(m);
+  });
+  layers[layerKey] = L.layerGroup(markers);
+
+  // If checkbox is checked, add to map
+  const chk = document.getElementById('lyr' + layerKey.toUpperCase());
+  if (chk && chk.checked) map.addLayer(layers[layerKey]);
+}
+
+// ============================================================
+// GEOJSON LAYERS (Canals, Wetlands, Admin Boundaries)
+// ============================================================
+function loadGeoJSON(filename, layerKey, styleFn, popupFn) {
+  fetch('data/' + filename)
+    .then(r => { if (!r.ok) throw new Error('Not found'); return r.json(); })
+    .then(gj => {
+      layers[layerKey] = L.geoJSON(gj, { style: styleFn, onEachFeature: popupFn });
+      map.addLayer(layers[layerKey]);
+      console.log('✅ ' + filename + ' loaded');
+    })
+    .catch(() => {
+      console.log('⚠️ ' + filename + ' not found, loading pre-defined Western Province geometry');
+      const sample = getSampleGeoJSON(layerKey);
+      layers[layerKey] = L.geoJSON(sample, { style: styleFn, onEachFeature: popupFn });
+      map.addLayer(layers[layerKey]);
+    });
+}
+
+function getSampleGeoJSON(type) {
+  if (type === 'canals') return {
+    type: 'FeatureCollection',
+    features: [
+      { type:'Feature', properties:{name:'Colombo Main Canal',condition:'severely_polluted'}, geometry:{type:'LineString',coordinates:[[79.845,6.955],[79.855,6.945],[79.865,6.938],[79.880,6.920]]} },
+      { type:'Feature', properties:{name:'Hamilton Canal',condition:'polluted'}, geometry:{type:'LineString',coordinates:[[79.820,7.010],[79.835,7.005],[79.850,6.998],[79.875,6.982]]} },
+      { type:'Feature', properties:{name:'Dematagoda Canal',condition:'severely_polluted'}, geometry:{type:'LineString',coordinates:[[79.870,6.935],[79.878,6.930],[79.885,6.925],[79.892,6.920]]} },
+      { type:'Feature', properties:{name:'Mutwal Canal',condition:'polluted'}, geometry:{type:'LineString',coordinates:[[79.845,6.960],[79.852,6.958],[79.860,6.954],[79.868,6.950]]} },
+      { type:'Feature', properties:{name:'Wellawatte Canal',condition:'moderate'}, geometry:{type:'LineString',coordinates:[[79.855,6.872],[79.862,6.870],[79.872,6.868]]} },
+      { type:'Feature', properties:{name:'Sri Jayawardenepura Basin Canal',condition:'good'}, geometry:{type:'LineString',coordinates:[[79.900,6.880],[79.912,6.894],[79.930,6.902]]} }
+    ]
+  };
+  if (type === 'wetlands') return {
+    type: 'FeatureCollection',
+    features: [
+      { type:'Feature', properties:{name:'Muthurajawela Wetland Sanctuary'}, geometry:{type:'Polygon',coordinates:[[[79.875,7.080],[79.905,7.075],[79.910,7.100],[79.880,7.110],[79.875,7.080]]]} },
+      { type:'Feature', properties:{name:'Bolgoda Lake Basin'}, geometry:{type:'Polygon',coordinates:[[[79.940,6.750],[79.975,6.745],[79.980,6.770],[79.950,6.785],[79.940,6.750]]]} },
+      { type:'Feature', properties:{name:'Beira Lake Urban Waterbody'}, geometry:{type:'Polygon',coordinates:[[[79.845,6.920],[79.856,6.918],[79.858,6.926],[79.844,6.927],[79.845,6.920]]]} }
+    ]
+  };
+  if (type === 'admin') return {
+    type: 'FeatureCollection',
+    features: [
+      { type:'Feature', properties:{name:'Western Province',level:'Province'}, geometry:{type:'Polygon',coordinates:[[[79.70,6.48],[80.22,6.48],[80.22,7.28],[79.70,7.28],[79.70,6.48]]]} },
+      { type:'Feature', properties:{name:'Colombo District',level:'District'}, geometry:{type:'Polygon',coordinates:[[[79.78,6.78],[80.10,6.78],[80.10,7.02],[79.78,7.02],[79.78,6.78]]]} },
+      { type:'Feature', properties:{name:'Gampaha District',level:'District'}, geometry:{type:'Polygon',coordinates:[[[79.85,7.00],[80.15,7.00],[80.15,7.28],[79.85,7.28],[79.85,7.00]]]} },
+      { type:'Feature', properties:{name:'Kalutara District',level:'District'}, geometry:{type:'Polygon',coordinates:[[[79.88,6.48],[80.22,6.48],[80.22,6.80],[79.88,6.80],[79.88,6.48]]]} }
+    ]
+  };
+}
+
+// ============================================================
+// INCIDENTS & HOTSPOTS
+// ============================================================
+function genReports() {
+  const spots = [
+    {lat:6.950,lng:79.840,c:'Colombo Main Canal'},{lat:6.945,lng:79.855,c:'Colombo Main Canal'},
+    {lat:7.010,lng:79.820,c:'Hamilton Canal'},{lat:6.935,lng:79.870,c:'Dematagoda Canal'},
+    {lat:6.960,lng:79.845,c:'Mutwal Canal'},{lat:6.870,lng:79.865,c:'Wellawatte Canal'},
+    {lat:6.980,lng:79.900,c:'Kelani Canal'},{lat:6.880,lng:79.900,c:'SJ Canal'}
+  ];
+  const sevs = ['high','high','medium','medium','medium','low','low'];
+  const types = ['Plastic','Sewage','Industrial','Blockage'];
+  const reports = [];
+  for (let i = 0; i < 28; i++) {
+    const s = spots[Math.floor(Math.random()*spots.length)];
+    const sev = sevs[Math.floor(Math.random()*sevs.length)];
+    const d = new Date(); d.setDate(d.getDate() - Math.floor(Math.random()*30));
+    reports.push({
+      lat: s.lat + (Math.random()-0.5)*0.012,
+      lng: s.lng + (Math.random()-0.5)*0.012,
+      canal: s.c,
+      severity: sev,
+      type: types[Math.floor(Math.random()*types.length)],
+      date: d.toISOString().slice(0,10)
+    });
+  }
+  return reports;
+}
+
+function renderReports(filter) {
+  if (layers.reports) map.removeLayer(layers.reports);
+  if (layers.heat) map.removeLayer(layers.heat);
+
+  const reps = filter === 'all' ? data.reports : data.reports.filter(r => r.severity === filter);
+  layers.reports = L.markerClusterGroup({ maxClusterRadius: 40 });
+  const heatPts = [];
+
+  reps.forEach(r => {
+    const c = r.severity==='high'?'#e11d48':(r.severity==='medium'?'#f59e0b':'#10b981');
+    const sz = r.severity==='high'?30:(r.severity==='medium'?26:22);
+
+    const icon = L.divIcon({
+      className:'',
+      html:'<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:'+c+';border:2.5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:'+(sz*0.4)+'px;box-shadow:0 3px 10px rgba(0,0,0,0.25)">⚠️</div>',
+      iconSize:[sz,sz],
+      iconAnchor:[sz/2,sz/2]
+    });
+
+    const mk = L.marker([r.lat, r.lng], { icon });
+    mk.bindPopup(
+      '<div style="min-width:180px">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px"><strong style="color:'+c+'">'+r.severity.toUpperCase()+'</strong><small style="color:#64748b">'+r.date+'</small></div>' +
+      '<strong>📍 '+r.canal+'</strong><br>' +
+      '<span style="color:#64748b;font-size:0.75rem">Pollution Type: '+r.type+'</span><br>' +
+      '<button onclick="openModal('+r.lat+','+r.lng+')" style="margin-top:8px;width:100%;padding:6px;background:#0284c7;border:none;color:#fff;border-radius:5px;cursor:pointer;font-size:0.72rem;font-weight:600">📝 Report Update Here</button>' +
+      '</div>'
+    );
+    layers.reports.addLayer(mk);
+
+    const weight = r.severity==='high'?1.0:(r.severity==='medium'?0.6:0.3);
+    heatPts.push([r.lat, r.lng, weight]);
+  });
+
+  if (document.getElementById('lyrReports').checked) map.addLayer(layers.reports);
+
+  layers.heat = L.heatLayer(heatPts, {
+    radius: 26,
+    blur: 20,
+    maxZoom: 15,
+    gradient: { 0.2: 'blue', 0.4: 'cyan', 0.6: 'lime', 0.8: 'yellow', 1.0: 'red' }
+  });
+  if (document.getElementById('lyrHeat').checked) map.addLayer(layers.heat);
+
+  // Update statistics
+  const all = data.reports;
+  document.getElementById('sTotal').textContent = all.length;
+  document.getElementById('sHigh').textContent = all.filter(r=>r.severity==='high').length;
+  document.getElementById('sMed').textContent = all.filter(r=>r.severity==='medium').length;
+  document.getElementById('sLow').textContent = all.filter(r=>r.severity==='low').length;
+  updateCharts();
+}
+
+// ============================================================
+// CHARTS
+// ============================================================
+function updateCharts() {
+  const reps = data.reports;
+  const tc = { Plastic:0, Sewage:0, Industrial:0, Blockage:0 };
+  reps.forEach(r => { if(tc[r.type]!==undefined) tc[r.type]++; });
+
+  if (!chartType) {
+    chartType = new Chart(document.getElementById('chartType'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(tc),
+        datasets: [{ data: Object.values(tc), backgroundColor: ['#8b5cf6','#0284c7','#f59e0b','#e11d48'], borderWidth: 0 }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '66%',
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 8, color: '#64748b', font: { size: 9 } } } }
+      }
+    });
+  } else {
+    chartType.data.datasets[0].data = Object.values(tc);
+    chartType.update();
+  }
+
+  const sc = [reps.filter(r=>r.severity==='high').length, reps.filter(r=>r.severity==='medium').length, reps.filter(r=>r.severity==='low').length];
+  if (!chartSev) {
+    chartSev = new Chart(document.getElementById('chartSev'), {
+      type: 'bar',
+      data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{ data: sc, backgroundColor: ['#e11d48','#f59e0b','#10b981'], borderRadius: 4 }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { display: false } },
+          y: { ticks: { color: '#64748b', font: { size: 8 } }, grid: { color: '#e2e8f0' } }
+        }
+      }
+    });
+  } else {
+    chartSev.data.datasets[0].data = sc;
+    chartSev.update();
+  }
+}
+
+// ============================================================
+// COLOR SCALES & HELPERS
+// ============================================================
+const MNDWI_S = [{v:-1,c:'#8B0000'},{v:-0.3,c:'#FF4500'},{v:0,c:'#FFD700'},{v:0.3,c:'#00CED1'},{v:1,c:'#00008B'}];
+const NDWI_S = [{v:-1,c:'#8B4513'},{v:-0.1,c:'#DAA520'},{v:0.1,c:'#90EE90'},{v:0.5,c:'#228B22'},{v:1,c:'#006400'}];
+const NDTI_S = [{v:-1,c:'#1a237e'},{v:-0.3,c:'#4fc3f7'},{v:0,c:'#fff176'},{v:0.3,c:'#ff6f00'},{v:1,c:'#b71c1c'}];
+
+function lerp(a,b,t){const ah=parseInt(a.slice(1),16),bh=parseInt(b.slice(1),16);const ar=(ah>>16)&0xff,ag=(ah>>8)&0xff,ab=ah&0xff;const br=(bh>>16)&0xff,bg=(bh>>8)&0xff,bb=bh&0xff;return'#'+((Math.round(ar+t*(br-ar))<<16)|(Math.round(ag+t*(bg-ag))<<8)|Math.round(ab+t*(bb-ab))).toString(16).padStart(6,'0');}
+function getColor(v,s){if(v<=s[0].v)return s[0].c;if(v>=s[s.length-1].v)return s[s.length-1].c;for(let i=0;i<s.length-1;i++){if(v>=s[i].v&&v<=s[i+1].v)return lerp(s[i].c,s[i+1].c,(v-s[i].v)/(s[i+1].v-s[i].v));}return s[0].c;}
+function genSample(f){const pts=[];const spots=[{lat:6.93,lng:79.86},{lat:6.95,lng:79.85},{lat:7.01,lng:79.83},{lat:6.87,lng:79.87},{lat:6.88,lng:79.90}];spots.forEach(s=>{for(let i=0;i<16;i++){const o={lat:s.lat+(Math.random()-0.5)*0.035,lng:s.lng+(Math.random()-0.5)*0.035};o[f]=parseFloat((Math.random()*1.2-0.4).toFixed(4));pts.push(o);}});return pts;}
+function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+
+// ============================================================
+// UI CONTROLS & LISTENERS
+// ============================================================
+function setupUI() {
+  document.getElementById('btnReport').addEventListener('click', startClick);
+  document.getElementById('reportModal').addEventListener('click', e => { if(e.target.id==='reportModal') closeModal(); });
+
+  // Form tab switcher
+  document.querySelectorAll('.form-tab').forEach(t => {
+    t.addEventListener('click', function() {
+      document.querySelectorAll('.form-tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.form-pane').forEach(x=>x.classList.remove('active'));
+      this.classList.add('active');
+      document.getElementById('pane-'+this.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Layer switches
+  const layerBindings = {
+    lyrCanals: 'canals',
+    lyrWetlands: 'wetlands',
+    lyrAdmin: 'admin',
+    lyrMNDWI: 'mndwi',
+    lyrNDWI: 'ndwi',
+    lyrNDTI: 'ndti',
+    lyrReports: 'reports',
+    lyrHeat: 'heat'
+  };
+
+  Object.entries(layerBindings).forEach(([id, key]) => {
+    document.getElementById(id).addEventListener('change', function() {
+      if (!layers[key]) return;
+      this.checked ? map.addLayer(layers[key]) : map.removeLayer(layers[key]);
+    });
+  });
+
+  // Opacity slider for indices
+  document.getElementById('opSlider').addEventListener('input', function() {
+    document.getElementById('opVal').textContent = this.value + '%';
+    const val = this.value / 100;
+    ['mndwi','ndwi','ndti'].forEach(k => {
+      if (layers[k]) layers[k].eachLayer(l => { if(l.setStyle) l.setStyle({fillOpacity: val}); });
+    });
+  });
+
+  // Filter Buttons
+  document.querySelectorAll('.fbtn').forEach(b => {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+      this.classList.add('active');
+      renderReports(this.dataset.f);
+    });
+  });
+}
+
+function submitQuick(e) {
+  e.preventDefault();
+  const lat = selectedCoords ? selectedCoords.lat : 6.935;
+  const lng = selectedCoords ? selectedCoords.lng : 79.865;
+  const types = Array.from(document.querySelectorAll('input[name="qt"]:checked')).map(c=>c.value);
+
+  data.reports.unshift({
+    lat, lng,
+    canal: document.getElementById('qCanal').value,
+    severity: document.getElementById('qSev').value,
+    type: types.join(', ') || 'Plastic',
+    date: new Date().toISOString().slice(0,10)
+  });
+
+  renderReports('all');
+  closeModal();
+  showToast('Report saved to live map!');
+  map.setView([lat, lng], 14, { animate: true });
+}
+
+// ============================================================
+// INITIALIZATION
+// ============================================================
+function init() {
+  initMap();
+  setupUI();
+
+  // 1. Canals Layer
+  const canalColors = { good:'#10b981', moderate:'#f59e0b', polluted:'#f97316', severely_polluted:'#e11d48' };
+  loadGeoJSON('canals.geojson', 'canals',
+    f => ({ color: canalColors[(f.properties||{}).condition]||'#0284c7', weight:3.5, opacity:0.9 }),
+    (f,l) => { const p=f.properties||{}; l.bindPopup('<strong>🌊 '+(p.name||'Canal')+'</strong><br>Flow Status: '+(p.condition||'Unknown')); }
+  );
+
+  // 2. Wetlands Layer
+  loadGeoJSON('wetlands.geojson', 'wetlands',
+    () => ({ color:'#10b981', weight:1.5, fillColor:'#10b981', fillOpacity:0.18, dashArray:'4,4' }),
+    (f,l) => { l.bindTooltip('🌿 ' + ((f.properties||{}).name || 'Wetland Area')); }
+  );
+
+  // 3. Admin Boundaries Layer
+  loadGeoJSON('admin_boundaries.geojson', 'admin',
+    f => ({ color: (f.properties||{}).level==='Province'?'#e11d48':'#f59e0b', weight:1.5, fillColor:'transparent', dashArray:'5,4', opacity:0.7 }),
+    (f,l) => { l.bindTooltip('🏛️ <strong>' + ((f.properties||{}).name || 'Boundary') + '</strong>'); }
+  );
+
+  // 4. Remote Sensing CSVs (From GEE exports)
+  loadCSV('mndwi.csv', 'mndwi', MNDWI_S, 'mndwi');
+  loadCSV('ndwi.csv', 'ndwi', NDWI_S, 'ndwi');
+  loadCSV('ndti.csv', 'ndti', NDTI_S, 'ndti');
+
+  // 5. Initial Reports
+  data.reports = genReports();
+  renderReports('all');
+
+  console.log('✅ Western Province Canal Map ready with guaranteed basemaps and auto-fill Google Form.');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
