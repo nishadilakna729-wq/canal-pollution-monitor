@@ -5,17 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Canal Pollution Monitor — Western Province</title>
 
-<!-- Leaflet (FREE) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- CSV Parser -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
-<!-- Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-
-<!-- Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
 <style>
@@ -42,7 +35,6 @@ body {
   overflow: hidden;
 }
 
-/* HEADER */
 .header {
   background: #1e293b;
   padding: 12px 22px;
@@ -53,11 +45,7 @@ body {
   flex-shrink: 0;
   z-index: 600;
 }
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+.header-left { display: flex; align-items: center; gap: 14px; }
 .logo {
   width: 44px; height: 44px;
   background: linear-gradient(135deg, #0284c7, #38bdf8);
@@ -65,44 +53,24 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 1.3rem; color: #fff;
 }
-.header h1 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.3px;
-}
-.header p {
-  font-size: 0.78rem;
-  color: #94a3b8;
-  margin-top: 2px;
-  font-weight: 500;
-}
+.header h1 { font-size: 1.35rem; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+.header p { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; font-weight: 500; }
 .report-btn {
   background: linear-gradient(135deg, #e11d48, #be123c);
   color: #fff; border: none;
   padding: 10px 18px; border-radius: 8px;
   font-size: 0.86rem; font-weight: 600;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
   transition: all 0.25s;
 }
-.report-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(225,29,72,0.4);
-}
+.report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(225,29,72,0.4); }
 
-/* LAYOUT */
 .main { display: flex; flex: 1; overflow: hidden; }
 
-/* SIDEBAR */
 .sidebar {
-  width: 295px;
-  background: #f8fafc;
+  width: 295px; background: #f8fafc;
   border-right: 1px solid var(--border);
-  overflow-y: auto;
-  flex-shrink: 0;
-  padding: 12px;
-  z-index: 500;
+  overflow-y: auto; flex-shrink: 0; padding: 12px; z-index: 500;
 }
 .sidebar::-webkit-scrollbar { width: 5px; }
 .sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -110,101 +78,64 @@ body {
 .panel {
   background: var(--card);
   border: 1px solid var(--border-light);
-  border-radius: 9px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  border-radius: 9px; margin-bottom: 10px;
+  overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
 .panel-title {
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: flex; align-items: center; gap: 8px;
-  background: #f1f5f9;
-  border-bottom: 1px solid var(--border-light);
+  padding: 10px 12px; font-size: 0.8rem; font-weight: 700;
+  color: var(--text-dark); text-transform: uppercase;
+  letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
+  background: #f1f5f9; border-bottom: 1px solid var(--border-light);
 }
 .panel-title i { color: var(--primary); }
 .panel-body { padding: 10px 12px; }
 
-/* INFO BOX */
 .info-box {
-  background: #e0f2fe;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
+  background: #e0f2fe; border: 1px solid #bae6fd;
+  border-radius: 8px; padding: 10px; margin-bottom: 10px;
 }
 .info-box h4 {
-  font-size: 0.78rem;
-  color: #0369a1;
-  margin-bottom: 6px;
+  font-size: 0.78rem; color: #0369a1; margin-bottom: 6px;
   display: flex; align-items: center; gap: 6px;
 }
-.info-box p {
-  font-size: 0.72rem;
-  color: #334155;
-  line-height: 1.4;
-}
-.step {
-  display: flex; align-items: flex-start; gap: 6px; margin-top: 5px;
-}
+.info-box p { font-size: 0.72rem; color: #334155; line-height: 1.4; }
+.step { display: flex; align-items: flex-start; gap: 6px; margin-top: 5px; }
 .step-n {
   background: #0284c7; color: #fff;
   width: 17px; height: 17px; border-radius: 50%;
   font-size: 0.6rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
-/* INDEX INFO */
-.index-info-box {
-  background: #fefce8;
-  border: 1px solid #fde68a;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
+/* SIMPLE INDEX INFO */
+.idx-box {
+  background: #fefce8; border: 1px solid #fde68a;
+  border-radius: 8px; padding: 10px; margin-bottom: 10px;
 }
-.index-info-box h4 {
-  font-size: 0.78rem;
-  color: #92400e;
-  margin-bottom: 8px;
+.idx-box h4 {
+  font-size: 0.78rem; color: #92400e; margin-bottom: 8px;
   display: flex; align-items: center; gap: 6px;
 }
-.index-item {
-  margin-bottom: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #fde68a;
-}
-.index-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.index-item strong {
-  font-size: 0.74rem;
-  color: #1e293b;
-  display: block;
-  margin-bottom: 2px;
-}
-.index-item p {
-  font-size: 0.68rem;
-  color: #64748b;
-  line-height: 1.4;
-}
-.index-item .range {
-  font-size: 0.64rem;
-  color: #92400e;
-  background: #fef3c7;
-  padding: 2px 6px;
-  border-radius: 3px;
-  display: inline-block;
-  margin-top: 3px;
-}
-
-/* LAYERS */
-.layer-row {
+.idx-row {
   display: flex; align-items: center; gap: 8px;
   padding: 6px 0;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid #fde68a;
+}
+.idx-row:last-child { border-bottom: none; }
+.idx-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; flex-shrink: 0;
+}
+.idx-icon.mndwi { background: #dbeafe; }
+.idx-icon.ndwi { background: #dcfce7; }
+.idx-icon.ndti { background: #fee2e2; }
+.idx-text strong { font-size: 0.72rem; color: #1e293b; display: block; }
+.idx-text span { font-size: 0.66rem; color: #64748b; }
+
+.layer-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid var(--border-light);
 }
 .layer-row:last-child { border-bottom: none; }
 .layer-row label {
@@ -213,12 +144,10 @@ body {
 }
 .layer-row input[type="checkbox"],
 .layer-row input[type="radio"] {
-  accent-color: var(--primary);
-  width: 15px; height: 15px; cursor: pointer;
+  accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer;
 }
 .ldot { width: 14px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
-/* OPACITY */
 .op-row {
   display: flex; align-items: center; gap: 8px;
   margin-top: 8px; padding-top: 6px;
@@ -228,11 +157,9 @@ body {
 .op-row input[type="range"] { flex: 1; height: 4px; accent-color: var(--primary); }
 .op-row span { font-size: 0.7rem; color: var(--text-med); width: 32px; text-align: right; }
 
-/* MAP */
 .map-wrap { flex: 1; position: relative; background: #e2e8f0; }
 #map { width: 100%; height: 100%; }
 
-/* CLICK BANNER */
 .click-banner {
   position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
   background: rgba(14,116,144,0.95); color: #fff;
@@ -250,43 +177,34 @@ body {
   cursor: pointer; font-size: 0.74rem;
 }
 
-/* COORD BAR */
 .coord-bar {
   position: absolute; bottom: 0; left: 0; right: 0;
   background: rgba(255,255,255,0.9);
   border-top: 1px solid var(--border-light);
   padding: 4px 14px; font-size: 0.68rem;
-  color: var(--text-muted);
-  display: flex; gap: 16px; z-index: 500;
+  color: var(--text-muted); display: flex; gap: 16px; z-index: 500;
 }
 
-/* MODAL */
 .modal-bg {
   position: fixed; inset: 0;
-  background: rgba(15,23,42,0.65);
-  backdrop-filter: blur(4px);
+  background: rgba(15,23,42,0.65); backdrop-filter: blur(4px);
   z-index: 2000; display: none;
-  align-items: center; justify-content: center;
-  padding: 16px;
+  align-items: center; justify-content: center; padding: 16px;
 }
 .modal-bg.show { display: flex; }
 .modal-box {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  width: 650px; max-width: 95vw; max-height: 92vh;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: 12px; width: 650px; max-width: 95vw; max-height: 92vh;
   overflow: hidden; display: flex; flex-direction: column;
   box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 .modal-head {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border-light);
+  padding: 14px 18px; border-bottom: 1px solid var(--border-light);
   display: flex; align-items: center; justify-content: space-between;
   background: #f8fafc;
 }
 .modal-head h2 {
-  font-size: 0.95rem; font-weight: 700;
-  color: var(--text-dark);
+  font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
   display: flex; align-items: center; gap: 8px;
 }
 .modal-head h2 i { color: var(--danger); }
@@ -318,28 +236,22 @@ body {
   border-radius: 8px; background: #fff;
 }
 
-/* TOAST */
 .toast {
   position: fixed; bottom: 24px; right: 24px;
   background: #0f172a; color: #fff;
-  padding: 11px 18px; border-radius: 8px;
-  font-size: 0.82rem;
-  display: flex; align-items: center; gap: 8px;
-  z-index: 3000;
+  padding: 11px 18px; border-radius: 8px; font-size: 0.82rem;
+  display: flex; align-items: center; gap: 8px; z-index: 3000;
   transform: translateY(120px); opacity: 0;
   transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
 }
 .toast.show { transform: translateY(0); opacity: 1; }
 
-/* LEAFLET OVERRIDES */
 .leaflet-popup-content-wrapper {
-  background: #ffffff !important;
-  color: var(--text-dark) !important;
-  border-radius: 9px !important;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+  background: #fff !important; color: var(--text-dark) !important;
+  border-radius: 9px !important; box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
   border: 1px solid var(--border-light) !important;
 }
-.leaflet-popup-tip { background: #ffffff !important; }
+.leaflet-popup-tip { background: #fff !important; }
 .leaflet-popup-content { margin: 12px 14px !important; font-size: 0.8rem !important; }
 
 @media (max-width: 768px) {
@@ -351,7 +263,6 @@ body {
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-left">
     <div class="logo"><i class="fas fa-water"></i></div>
@@ -360,49 +271,50 @@ body {
       <p>Community-Based Urban Canal Pollution Reporting & Monitoring</p>
     </div>
   </div>
-  <button class="report-btn" id="btnReport">
-    <i class="fas fa-map-marker-alt"></i> Report Pollution
-  </button>
+  <button class="report-btn" id="btnReport"><i class="fas fa-map-marker-alt"></i> Report Pollution</button>
 </header>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
 
     <!-- How to Report -->
     <div class="info-box">
       <h4><i class="fas fa-circle-info"></i> How to Report</h4>
-      <div class="step"><span class="step-n">1</span><p>Click <strong>"Report Pollution"</strong> button above</p></div>
-      <div class="step"><span class="step-n">2</span><p>Click on the <strong>map</strong> where you see pollution</p></div>
-      <div class="step"><span class="step-n">3</span><p>Google Form opens with <strong>location auto-filled</strong>. Fill details and submit.</p></div>
+      <div class="step"><span class="step-n">1</span><p>Click <strong>"Report Pollution"</strong> button</p></div>
+      <div class="step"><span class="step-n">2</span><p>Click on the <strong>map</strong> at the pollution spot</p></div>
+      <div class="step"><span class="step-n">3</span><p>Google Form opens with <strong>location filled</strong>. Submit!</p></div>
     </div>
 
-    <!-- What do the indices mean? -->
-    <div class="index-info-box">
-      <h4><i class="fas fa-flask"></i> Understanding Water Indices</h4>
+    <!-- Simple Index Explanations -->
+    <div class="idx-box">
+      <h4><i class="fas fa-droplet"></i> What the Map Colours Show</h4>
 
-      <div class="index-item">
-        <strong>MNDWI — Modified Normalized Difference Water Index</strong>
-        <p>Detects <strong>open water bodies</strong> and distinguishes water from built-up urban areas. Higher values indicate the presence of water surfaces like canals, lakes, and flooded areas.</p>
-        <span class="range">Positive values (+) = Water present &nbsp;|&nbsp; Negative (-) = Dry land / Urban</span>
+      <div class="idx-row">
+        <div class="idx-icon mndwi">💧</div>
+        <div class="idx-text">
+          <strong>MNDWI — Water Detection</strong>
+          <span>Blue = Water found &nbsp;|&nbsp; Red/Yellow = Dry land</span>
+        </div>
       </div>
 
-      <div class="index-item">
-        <strong>NDWI — Normalized Difference Water Index</strong>
-        <p>Measures <strong>vegetation water content</strong> and moisture levels. Useful for identifying areas where vegetation near canals has adequate water or is under drought stress.</p>
-        <span class="range">Positive (+) = Healthy vegetation moisture &nbsp;|&nbsp; Negative (-) = Dry / Stressed vegetation</span>
+      <div class="idx-row">
+        <div class="idx-icon ndwi">🌿</div>
+        <div class="idx-text">
+          <strong>NDWI — Vegetation Moisture</strong>
+          <span>Green = Healthy plants &nbsp;|&nbsp; Brown = Dry plants</span>
+        </div>
       </div>
 
-      <div class="index-item">
-        <strong>NDTI — Normalized Difference Turbidity Index</strong>
-        <p>Indicates <strong>water turbidity and pollution level</strong>. High turbidity often signals suspended sediments, sewage discharge, or industrial effluent in the canal water.</p>
-        <span class="range">High values = Turbid / Polluted water &nbsp;|&nbsp; Low values = Clear water</span>
+      <div class="idx-row">
+        <div class="idx-icon ndti">🟤</div>
+        <div class="idx-text">
+          <strong>NDTI — Water Clarity</strong>
+          <span>Red = Dirty/Polluted water &nbsp;|&nbsp; Blue = Clean water</span>
+        </div>
       </div>
     </div>
 
-    <!-- Layers Panel -->
+    <!-- Layers -->
     <div class="panel">
       <div class="panel-title"><i class="fas fa-layer-group"></i> Layers</div>
       <div class="panel-body">
@@ -428,10 +340,9 @@ body {
         </div>
         <div class="layer-row">
           <input type="checkbox" id="lyrNDTI"/>
-          <label for="lyrNDTI">NDTI (Water Turbidity)</label>
+          <label for="lyrNDTI">NDTI (Water Clarity)</label>
           <div class="ldot" style="background:linear-gradient(90deg,#003a8c,#40a9ff,#faad14,#cf1322)"></div>
         </div>
-
         <div class="op-row">
           <label>Opacity</label>
           <input type="range" id="opSlider" min="10" max="100" value="80"/>
@@ -461,20 +372,16 @@ body {
 
   </aside>
 
-  <!-- MAP -->
   <main class="map-wrap">
     <div id="map"></div>
-
     <div class="click-banner" id="clickBanner">
       <i class="fas fa-crosshairs fa-spin"></i>
       Click on the map where you see pollution
       <button onclick="cancelClick()">Cancel</button>
     </div>
-
     <div class="coord-bar">
       <span><i class="fas fa-location-dot" style="color:var(--primary)"></i>
-        <span id="cLat">Lat: —</span>, <span id="cLng">Lng: —</span>
-      </span>
+        <span id="cLat">Lat: —</span>, <span id="cLng">Lng: —</span></span>
       <span id="cZoom">Zoom: —</span>
       <span>Western Province Canal GIS • WGS84</span>
     </div>
@@ -490,21 +397,13 @@ body {
     </div>
     <div class="modal-body">
       <div class="loc-info">
-        <div>
-          <i class="fas fa-map-pin"></i> Location:
-          <span class="loc-coords" id="modalCoords">—</span>
-        </div>
-        <button class="copy-btn" onclick="copyCoords()">
-          <i class="fas fa-copy"></i> Copy
-        </button>
+        <div><i class="fas fa-map-pin"></i> Location: <span class="loc-coords" id="modalCoords">—</span></div>
+        <button class="copy-btn" onclick="copyCoords()"><i class="fas fa-copy"></i> Copy</button>
       </div>
       <iframe id="gformFrame" class="form-frame" src="about:blank"></iframe>
       <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
-        <small style="color:var(--text-muted);font-size:0.72rem">
-          Latitude & Longitude auto-filled in the form.
-        </small>
-        <a id="formNewTab" href="#" target="_blank"
-           style="color:var(--primary);font-size:0.75rem;font-weight:600;text-decoration:none">
+        <small style="color:var(--text-muted);font-size:0.72rem">Latitude & Longitude auto-filled in the form.</small>
+        <a id="formNewTab" href="#" target="_blank" style="color:var(--primary);font-size:0.75rem;font-weight:600;text-decoration:none">
           <i class="fas fa-external-link-alt"></i> Open in New Tab
         </a>
       </div>
@@ -512,17 +411,13 @@ body {
   </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <i class="fas fa-circle-check" style="color:#10b981"></i>
-  <span id="toastMsg">Done!</span>
-</div>
+<div class="toast" id="toast"><i class="fas fa-circle-check" style="color:#10b981"></i> <span id="toastMsg">Done!</span></div>
 
 <script>
 'use strict';
 
 // ============================================================
-// GOOGLE FORM CONFIG (YOUR ENTRY IDS)
+// GOOGLE FORM (YOUR ENTRY IDS)
 // ============================================================
 var FORM_ID = '1FAIpQLSetOwEP6Sr3pJXCw7geq_5YBbuq3y5KcBtTCGC0AqSDEVW8rw';
 var FORM_BASE = 'https://docs.google.com/forms/d/e/' + FORM_ID + '/viewform?embedded=true';
@@ -530,7 +425,7 @@ var ENTRY_LAT = 'entry.1267784781';
 var ENTRY_LNG = 'entry.2040321760';
 
 // ============================================================
-// STATE
+// STATE - NO SAMPLE DATA AT ALL
 // ============================================================
 var map;
 var clickMode = false;
@@ -538,56 +433,37 @@ var clickMarker = null;
 var layers = {};
 
 // ============================================================
-// COLOR SCALES (Professional & Clear)
+// COLOR SCALES
 // ============================================================
-// MNDWI: Red (dry/urban) -> Yellow (transition) -> Blue (water)
 var MNDWI_SCALE = [
-  {v: -1.0, c: '#d4380d'},
-  {v: -0.3, c: '#fa541c'},
-  {v:  0.0, c: '#fadb14'},
-  {v:  0.3, c: '#40a9ff'},
-  {v:  1.0, c: '#1d39c4'}
+  {v:-1.0, c:'#d4380d'}, {v:-0.3, c:'#fa541c'},
+  {v:0.0, c:'#fadb14'}, {v:0.3, c:'#40a9ff'}, {v:1.0, c:'#1d39c4'}
 ];
-
-// NDWI: Brown (dry) -> Light Green -> Dark Green (moist vegetation)
 var NDWI_SCALE = [
-  {v: -1.0, c: '#ad6800'},
-  {v: -0.2, c: '#d48806'},
-  {v:  0.0, c: '#95de64'},
-  {v:  0.3, c: '#52c41a'},
-  {v:  1.0, c: '#135200'}
+  {v:-1.0, c:'#ad6800'}, {v:-0.2, c:'#d48806'},
+  {v:0.0, c:'#95de64'}, {v:0.3, c:'#52c41a'}, {v:1.0, c:'#135200'}
 ];
-
-// NDTI: Deep Blue (clear) -> Light Blue -> Yellow -> Red (turbid/polluted)
 var NDTI_SCALE = [
-  {v: -1.0, c: '#003a8c'},
-  {v: -0.2, c: '#40a9ff'},
-  {v:  0.0, c: '#fff566'},
-  {v:  0.3, c: '#faad14'},
-  {v:  1.0, c: '#cf1322'}
+  {v:-1.0, c:'#003a8c'}, {v:-0.2, c:'#40a9ff'},
+  {v:0.0, c:'#fff566'}, {v:0.3, c:'#faad14'}, {v:1.0, c:'#cf1322'}
 ];
 
 // ============================================================
-// COLOR UTILITIES
+// COLOR HELPERS
 // ============================================================
 function lerpColor(a, b, t) {
-  var ah = parseInt(a.slice(1), 16);
-  var bh = parseInt(b.slice(1), 16);
-  var ar = (ah >> 16) & 0xff, ag = (ah >> 8) & 0xff, ab = ah & 0xff;
-  var br = (bh >> 16) & 0xff, bg = (bh >> 8) & 0xff, bb = bh & 0xff;
-  var rr = Math.round(ar + t * (br - ar));
-  var rg = Math.round(ag + t * (bg - ag));
-  var rb = Math.round(ab + t * (bb - ab));
-  return '#' + ((rr << 16) | (rg << 8) | rb).toString(16).padStart(6, '0');
+  var ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
+  var ar = (ah>>16)&0xff, ag = (ah>>8)&0xff, ab = ah&0xff;
+  var br = (bh>>16)&0xff, bg = (bh>>8)&0xff, bb = bh&0xff;
+  return '#' + ((Math.round(ar+t*(br-ar))<<16)|(Math.round(ag+t*(bg-ag))<<8)|Math.round(ab+t*(bb-ab))).toString(16).padStart(6,'0');
 }
 
 function getColor(v, scale) {
   if (v <= scale[0].v) return scale[0].c;
-  if (v >= scale[scale.length - 1].v) return scale[scale.length - 1].c;
-  for (var i = 0; i < scale.length - 1; i++) {
-    if (v >= scale[i].v && v <= scale[i + 1].v) {
-      var t = (v - scale[i].v) / (scale[i + 1].v - scale[i].v);
-      return lerpColor(scale[i].c, scale[i + 1].c, t);
+  if (v >= scale[scale.length-1].v) return scale[scale.length-1].c;
+  for (var i = 0; i < scale.length-1; i++) {
+    if (v >= scale[i].v && v <= scale[i+1].v) {
+      return lerpColor(scale[i].c, scale[i+1].c, (v - scale[i].v) / (scale[i+1].v - scale[i].v));
     }
   }
   return scale[0].c;
@@ -595,63 +471,55 @@ function getColor(v, scale) {
 
 function getMeaning(field, v) {
   if (field === 'mndwi') {
-    if (v > 0.3) return 'Water body detected';
-    if (v > 0.0) return 'Possible water / wet surface';
-    return 'Dry land / Urban area';
+    if (v > 0.3) return 'Water body found';
+    if (v > 0.0) return 'Wet surface';
+    return 'Dry land';
   }
   if (field === 'ndwi') {
-    if (v > 0.3) return 'High vegetation moisture';
+    if (v > 0.3) return 'Healthy vegetation';
     if (v > 0.0) return 'Moderate moisture';
-    return 'Dry / Stressed vegetation';
+    return 'Dry vegetation';
   }
   if (field === 'ndti') {
-    if (v > 0.3) return 'Highly turbid / Polluted water';
-    if (v > 0.1) return 'Moderately turbid';
-    if (v > -0.1) return 'Slightly turbid';
-    return 'Clear water';
+    if (v > 0.3) return 'Very dirty water';
+    if (v > 0.1) return 'Somewhat dirty';
+    if (v > -0.1) return 'Slightly murky';
+    return 'Clean water';
   }
   return '';
 }
 
 // ============================================================
-// MAP INITIALIZATION
+// MAP INIT
 // ============================================================
 function initMap() {
   map = L.map('map', {
     center: [6.935, 79.870],
     zoom: 11,
     maxZoom: 18,
-    minZoom: 8,
-    attributionControl: true
+    minZoom: 8
   });
 
-  // ALL FREE BASE MAPS - NO API KEY
   layers.bm = {
     osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '© OpenStreetMap'
+      maxZoom: 19, attribution: '© OpenStreetMap'
     }),
     satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 18,
-      attribution: '© Esri'
+      maxZoom: 18, attribution: '© Esri'
     }),
     street: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      attribution: '© Esri'
+      maxZoom: 19, attribution: '© Esri'
     })
   };
-
   layers.bm.osm.addTo(map);
 
-  // Basemap switch
-  document.querySelectorAll('input[name="bm"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-      Object.values(layers.bm).forEach(function(lyr) { map.removeLayer(lyr); });
-      layers.bm[radio.value].addTo(map);
+  document.querySelectorAll('input[name="bm"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      Object.values(layers.bm).forEach(function(l) { map.removeLayer(l); });
+      layers.bm[r.value].addTo(map);
     });
   });
 
-  // Mouse coordinates
   map.on('mousemove', function(e) {
     document.getElementById('cLat').textContent = 'Lat: ' + e.latlng.lat.toFixed(5);
     document.getElementById('cLng').textContent = 'Lng: ' + e.latlng.lng.toFixed(5);
@@ -660,37 +528,30 @@ function initMap() {
     document.getElementById('cZoom').textContent = 'Zoom: ' + map.getZoom();
   });
 
-  // Click to report
   map.on('click', function(e) {
     if (!clickMode) return;
-
     if (clickMarker) map.removeLayer(clickMarker);
     clickMarker = L.circleMarker([e.latlng.lat, e.latlng.lng], {
-      radius: 9, fillColor: '#0284c7', color: '#fff',
-      weight: 3, fillOpacity: 0.95
+      radius: 9, fillColor: '#0284c7', color: '#fff', weight: 3, fillOpacity: 0.95
     }).addTo(map);
-
     cancelClick();
     showToast('Location captured! Opening form...');
-    setTimeout(function() {
-      openModal(e.latlng.lat, e.latlng.lng);
-    }, 350);
+    setTimeout(function() { openModal(e.latlng.lat, e.latlng.lng); }, 350);
   });
 
   map.fitBounds([[6.48, 79.70], [7.28, 80.22]]);
 }
 
 // ============================================================
-// MODAL & GOOGLE FORM AUTO-FILL
+// MODAL & FORM
 // ============================================================
 function openModal(lat, lng) {
   var latStr = lat.toFixed(6);
   var lngStr = lng.toFixed(6);
   document.getElementById('modalCoords').textContent = latStr + '°N, ' + lngStr + '°E';
-
-  var formURL = FORM_BASE + '&' + ENTRY_LAT + '=' + latStr + '&' + ENTRY_LNG + '=' + lngStr;
-  document.getElementById('gformFrame').src = formURL;
-  document.getElementById('formNewTab').href = formURL.replace('embedded=true', 'usp=pp_url');
+  var url = FORM_BASE + '&' + ENTRY_LAT + '=' + latStr + '&' + ENTRY_LNG + '=' + lngStr;
+  document.getElementById('gformFrame').src = url;
+  document.getElementById('formNewTab').href = url.replace('embedded=true', 'usp=pp_url');
   document.getElementById('reportModal').classList.add('show');
 }
 
@@ -701,8 +562,8 @@ function closeModal() {
 }
 
 function copyCoords() {
-  var txt = document.getElementById('modalCoords').textContent;
-  navigator.clipboard.writeText(txt.replace('°N, ', ', ').replace('°E', ''));
+  var t = document.getElementById('modalCoords').textContent;
+  navigator.clipboard.writeText(t.replace('°N, ', ', ').replace('°E', ''));
   showToast('Coordinates copied!');
 }
 
@@ -719,240 +580,170 @@ function cancelClick() {
 }
 
 function showToast(msg) {
-  var t = document.getElementById('toast');
+  var el = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3200);
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 3200);
 }
 
 // ============================================================
-// LOAD CSV DATA (MNDWI, NDWI, NDTI from data/ folder)
+// LOAD CSV (ONLY from data/ folder — NO fallback samples)
 // ============================================================
 function loadCSV(filename, field, scale, layerKey, checkboxId) {
   Papa.parse('data/' + filename, {
-    download: true,
-    header: true,
-    dynamicTyping: true,
-    skipEmptyLines: true,
+    download: true, header: true, dynamicTyping: true, skipEmptyLines: true,
     complete: function(results) {
       var pts = results.data.filter(function(r) {
         return r.lat && r.lng && r[field] !== undefined && r[field] !== null && !isNaN(r[field]);
       });
-
       if (pts.length === 0) {
-        console.log('⚠️ ' + filename + ': No valid data points found. Check column names (need: lat, lng, ' + field + ')');
+        console.log('⚠️ ' + filename + ': No valid points. Need columns: lat, lng, ' + field);
         return;
       }
-
-      renderIndexLayer(pts, field, scale, layerKey, checkboxId);
-      console.log('✅ ' + filename + ': ' + pts.length + ' points loaded successfully');
+      renderIndex(pts, field, scale, layerKey, checkboxId);
+      console.log('✅ ' + filename + ': ' + pts.length + ' points loaded');
     },
-    error: function(err) {
-      console.log('⚠️ ' + filename + ' not found in data/ folder. Upload it to see the layer.');
-      console.log('   Expected columns: lat, lng, ' + field);
+    error: function() {
+      console.log('⚠️ ' + filename + ' not found in data/ folder.');
     }
   });
 }
 
-function renderIndexLayer(pts, field, scale, layerKey, checkboxId) {
+function renderIndex(pts, field, scale, layerKey, checkboxId) {
   if (layers[layerKey]) map.removeLayer(layers[layerKey]);
-
   var markers = [];
-  var fieldUpper = field.toUpperCase();
+  var fu = field.toUpperCase();
 
   pts.forEach(function(p) {
-    var lat = parseFloat(p.lat);
-    var lng = parseFloat(p.lng);
-    var v = parseFloat(p[field]);
+    var lat = parseFloat(p.lat), lng = parseFloat(p.lng), v = parseFloat(p[field]);
     if (isNaN(lat) || isNaN(lng) || isNaN(v)) return;
 
     var col = getColor(v, scale);
     var meaning = getMeaning(field, v);
 
-    var circle = L.circleMarker([lat, lng], {
-      radius: 6,
-      fillColor: col,
-      color: 'rgba(0,0,0,0.15)',
-      weight: 1,
-      fillOpacity: 0.85
+    var c = L.circleMarker([lat, lng], {
+      radius: 6, fillColor: col, color: 'rgba(0,0,0,0.12)', weight: 1, fillOpacity: 0.85
     });
 
-    circle.bindPopup(
-      '<div style="min-width:180px">' +
-      '<div style="font-weight:700;font-size:0.88rem;margin-bottom:4px;color:#0f172a">' + fieldUpper + ' Value</div>' +
-      '<div style="font-size:1.1rem;font-weight:800;color:' + col + ';margin-bottom:6px">' + v.toFixed(4) + '</div>' +
-      '<div style="font-size:0.75rem;color:#334155;margin-bottom:6px;padding:5px 8px;background:#f1f5f9;border-radius:5px">' +
-      '📊 ' + meaning +
-      '</div>' +
-      '<div style="font-size:0.68rem;color:#64748b">' +
-      '📍 ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E' +
-      '</div>' +
+    c.bindPopup(
+      '<div style="min-width:170px">' +
+      '<div style="font-weight:700;font-size:0.85rem;margin-bottom:3px">' + fu + '</div>' +
+      '<div style="font-size:1.05rem;font-weight:800;color:' + col + ';margin-bottom:5px">' + v.toFixed(4) + '</div>' +
+      '<div style="font-size:0.74rem;color:#334155;padding:4px 7px;background:#f1f5f9;border-radius:4px;margin-bottom:5px">' + meaning + '</div>' +
+      '<div style="font-size:0.66rem;color:#64748b">📍 ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '</div>' +
       '</div>'
     );
-
-    markers.push(circle);
+    markers.push(c);
   });
 
   layers[layerKey] = L.layerGroup(markers);
-
-  // Add to map if checkbox is checked
   var chk = document.getElementById(checkboxId);
-  if (chk && chk.checked) {
-    map.addLayer(layers[layerKey]);
-  }
+  if (chk && chk.checked) map.addLayer(layers[layerKey]);
 }
 
 // ============================================================
-// LOAD GEOJSON (Canals, Admin - ONLY from data/ files)
+// LOAD GEOJSON (ONLY from data/ folder — NO fallback samples)
 // ============================================================
-function loadGeoJSON(filename, layerKey, styleFn, popupFn, checkboxId) {
+function loadGeoJSON(filename, layerKey, styleFn, featureFn, checkboxId) {
   fetch('data/' + filename)
-    .then(function(response) {
-      if (!response.ok) throw new Error('File not found');
-      return response.json();
+    .then(function(r) {
+      if (!r.ok) throw new Error('Not found');
+      return r.json();
     })
-    .then(function(geojson) {
-      layers[layerKey] = L.geoJSON(geojson, {
-        style: styleFn,
-        onEachFeature: popupFn
-      });
-
+    .then(function(gj) {
+      layers[layerKey] = L.geoJSON(gj, { style: styleFn, onEachFeature: featureFn });
       var chk = document.getElementById(checkboxId);
-      if (chk && chk.checked) {
-        map.addLayer(layers[layerKey]);
-      }
-
-      console.log('✅ ' + filename + ' loaded successfully');
+      if (chk && chk.checked) map.addLayer(layers[layerKey]);
+      console.log('✅ ' + filename + ' loaded');
     })
-    .catch(function(err) {
-      console.log('⚠️ ' + filename + ' not found in data/ folder. Upload it to GitHub.');
+    .catch(function() {
+      console.log('⚠️ ' + filename + ' not found in data/ folder.');
     });
 }
 
 // ============================================================
-// LAYER TOGGLE CONTROLS
+// LAYER TOGGLES
 // ============================================================
-function setupLayerToggles() {
-  var bindings = {
-    lyrCanals: 'canals',
-    lyrAdmin: 'admin',
-    lyrMNDWI: 'mndwi',
-    lyrNDWI: 'ndwi',
-    lyrNDTI: 'ndti'
-  };
-
-  Object.keys(bindings).forEach(function(id) {
-    var key = bindings[id];
+function setupToggles() {
+  var map2 = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti' };
+  Object.keys(map2).forEach(function(id) {
+    var key = map2[id];
     document.getElementById(id).addEventListener('change', function() {
       if (!layers[key]) return;
-      if (this.checked) {
-        map.addLayer(layers[key]);
-      } else {
-        map.removeLayer(layers[key]);
-      }
+      this.checked ? map.addLayer(layers[key]) : map.removeLayer(layers[key]);
     });
   });
 }
 
-// ============================================================
-// OPACITY SLIDER
-// ============================================================
 function setupOpacity() {
   document.getElementById('opSlider').addEventListener('input', function() {
-    var val = this.value;
-    document.getElementById('opVal').textContent = val + '%';
-    var opacity = val / 100;
-
-    ['mndwi', 'ndwi', 'ndti'].forEach(function(k) {
-      if (layers[k]) {
-        layers[k].eachLayer(function(lyr) {
-          if (lyr.setStyle) lyr.setStyle({ fillOpacity: opacity });
-        });
-      }
+    document.getElementById('opVal').textContent = this.value + '%';
+    var op = this.value / 100;
+    ['mndwi','ndwi','ndti'].forEach(function(k) {
+      if (layers[k]) layers[k].eachLayer(function(l) { if (l.setStyle) l.setStyle({fillOpacity:op}); });
     });
   });
 }
 
 // ============================================================
-// MAIN INITIALIZATION
+// INIT — LOADS ONLY YOUR REAL DATA FILES, NOTHING ELSE
 // ============================================================
 function init() {
-  // 1. Create map
   initMap();
-
-  // 2. Setup controls
-  setupLayerToggles();
+  setupToggles();
   setupOpacity();
 
-  // 3. Report button
   document.getElementById('btnReport').addEventListener('click', startClick);
   document.getElementById('reportModal').addEventListener('click', function(e) {
     if (e.target.id === 'reportModal') closeModal();
   });
 
-  // 4. Load ONLY real data from your data/ folder
-
-  // Canals - from your QGIS export
+  // Load canals from YOUR file only
   loadGeoJSON('canals.geojson', 'canals',
-    function(feature) {
-      var cond = (feature.properties || {}).condition || '';
-      var color = '#0284c7'; // default blue
-      if (cond === 'severely_polluted' || cond === 'bad') color = '#e11d48';
-      else if (cond === 'polluted' || cond === 'poor') color = '#f97316';
-      else if (cond === 'moderate') color = '#f59e0b';
-      else if (cond === 'good') color = '#10b981';
-      return { color: color, weight: 3, opacity: 0.85 };
+    function(f) {
+      var c = (f.properties || {}).condition || '';
+      var col = '#0284c7';
+      if (c === 'severely_polluted' || c === 'bad') col = '#e11d48';
+      else if (c === 'polluted' || c === 'poor') col = '#f97316';
+      else if (c === 'moderate') col = '#f59e0b';
+      else if (c === 'good') col = '#10b981';
+      return { color: col, weight: 3, opacity: 0.85 };
     },
-    function(feature, layer) {
-      var p = feature.properties || {};
-      var name = p.name || p.Name || p.NAME || 'Canal';
-      layer.bindPopup('<strong>🌊 ' + name + '</strong>');
-      layer.on('mouseover', function() { this.setStyle({ weight: 5 }); });
-      layer.on('mouseout', function() { this.setStyle({ weight: 3 }); });
+    function(f, layer) {
+      var n = (f.properties||{}).name || (f.properties||{}).Name || (f.properties||{}).NAME || 'Canal';
+      layer.bindPopup('<strong>🌊 ' + n + '</strong>');
+      layer.on('mouseover', function() { this.setStyle({weight:5}); });
+      layer.on('mouseout', function() { this.setStyle({weight:3}); });
     },
     'lyrCanals'
   );
 
-  // Administrative Boundaries - DARK/BLACK color as requested
+  // Load admin boundaries from YOUR file only (dark color)
   loadGeoJSON('admin_boundaries.geojson', 'admin',
-    function(feature) {
-      var level = (feature.properties || {}).level || (feature.properties || {}).Level || '';
+    function(f) {
+      var lv = (f.properties||{}).level || (f.properties||{}).Level || '';
       return {
-        color: '#1e293b',         // Dark slate / near black
-        weight: level === 'Province' ? 2.5 : 1.8,
+        color: '#1e293b',
+        weight: lv === 'Province' ? 2.5 : 1.8,
         fillColor: 'transparent',
-        dashArray: level === 'Province' ? null : '6,4',
+        dashArray: lv === 'Province' ? null : '6,4',
         opacity: 0.8
       };
     },
-    function(feature, layer) {
-      var name = (feature.properties || {}).name || (feature.properties || {}).Name || 'Boundary';
-      layer.bindTooltip('🏛️ ' + name);
+    function(f, layer) {
+      var n = (f.properties||{}).name || (f.properties||{}).Name || 'Boundary';
+      layer.bindTooltip(n);
     },
     'lyrAdmin'
   );
 
-  // MNDWI from GEE CSV
+  // Load index CSVs from YOUR files only
   loadCSV('mndwi.csv', 'mndwi', MNDWI_SCALE, 'mndwi', 'lyrMNDWI');
-
-  // NDWI from GEE CSV
   loadCSV('ndwi.csv', 'ndwi', NDWI_SCALE, 'ndwi', 'lyrNDWI');
-
-  // NDTI from GEE CSV
   loadCSV('ndti.csv', 'ndti', NDTI_SCALE, 'ndti', 'lyrNDTI');
 
-  console.log('');
-  console.log('✅ Canal Pollution Monitor ready!');
-  console.log('');
-  console.log('📁 This map loads ONLY real data from your data/ folder:');
-  console.log('   data/canals.geojson           ← Canal network from QGIS');
-  console.log('   data/admin_boundaries.geojson  ← District/Province boundaries');
-  console.log('   data/mndwi.csv                 ← MNDWI from GEE (columns: lat, lng, mndwi)');
-  console.log('   data/ndwi.csv                  ← NDWI from GEE (columns: lat, lng, ndwi)');
-  console.log('   data/ndti.csv                  ← NDTI from GEE (columns: lat, lng, ndti)');
-  console.log('');
-  console.log('📝 If a file is missing, that layer simply won\'t appear. No errors.');
-  console.log('🔗 Google Form auto-fills Lat/Lng using entry.1267784781 and entry.2040321760');
+  console.log('✅ Map ready — loads ONLY files from data/ folder');
+  console.log('   No sample/fake data included');
 }
 
 document.addEventListener('DOMContentLoaded', init);
