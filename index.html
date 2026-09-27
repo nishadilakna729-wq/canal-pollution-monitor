@@ -13,265 +13,101 @@
 
 <style>
 :root {
-  --bg: #f1f5f9;
-  --card: #ffffff;
-  --border: #cbd5e1;
-  --border-light: #e2e8f0;
-  --primary: #0284c7;
-  --text-dark: #0f172a;
-  --text-med: #334155;
-  --text-muted: #64748b;
-  --danger: #e11d48;
-  --success: #10b981;
+  --bg:#f1f5f9; --card:#fff; --border:#cbd5e1; --border-light:#e2e8f0;
+  --primary:#0284c7; --text-dark:#0f172a; --text-med:#334155; --text-muted:#64748b;
+  --danger:#e11d48; --success:#10b981;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text-dark);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text-dark);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-.header {
-  background: #1e293b;
-  padding: 12px 22px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid var(--primary);
-  flex-shrink: 0;
-  z-index: 600;
-}
-.header-left { display: flex; align-items: center; gap: 14px; }
-.logo {
-  width: 44px; height: 44px;
-  background: linear-gradient(135deg, #0284c7, #38bdf8);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem; color: #fff;
-}
-.header h1 { font-size: 1.35rem; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
-.header p { font-size: 0.78rem; color: #94a3b8; margin-top: 2px; font-weight: 500; }
-.report-btn {
-  background: linear-gradient(135deg, #e11d48, #be123c);
-  color: #fff; border: none;
-  padding: 10px 18px; border-radius: 8px;
-  font-size: 0.86rem; font-weight: 600;
-  cursor: pointer; display: flex; align-items: center; gap: 8px;
-  transition: all 0.25s;
-}
-.report-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(225,29,72,0.4); }
+.header{background:#1e293b;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--primary);flex-shrink:0;z-index:600}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo{width:44px;height:44px;background:linear-gradient(135deg,#0284c7,#38bdf8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff}
+.header h1{font-size:1.35rem;font-weight:700;color:#fff;letter-spacing:-0.3px}
+.header p{font-size:0.78rem;color:#94a3b8;margin-top:2px;font-weight:500}
+.report-btn{background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:0.86rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.25s}
+.report-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(225,29,72,0.4)}
 
-.main { display: flex; flex: 1; overflow: hidden; }
+.main{display:flex;flex:1;overflow:hidden}
 
-.sidebar {
-  width: 295px; background: #f8fafc;
-  border-right: 1px solid var(--border);
-  overflow-y: auto; flex-shrink: 0; padding: 12px; z-index: 500;
-}
-.sidebar::-webkit-scrollbar { width: 5px; }
-.sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.sidebar{width:295px;background:#f8fafc;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:12px;z-index:500}
+.sidebar::-webkit-scrollbar{width:5px}
+.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
 
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border-light);
-  border-radius: 9px; margin-bottom: 10px;
-  overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-}
-.panel-title {
-  padding: 10px 12px; font-size: 0.8rem; font-weight: 700;
-  color: var(--text-dark); text-transform: uppercase;
-  letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;
-  background: #f1f5f9; border-bottom: 1px solid var(--border-light);
-}
-.panel-title i { color: var(--primary); }
-.panel-body { padding: 10px 12px; }
+.panel{background:var(--card);border:1px solid var(--border-light);border-radius:9px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.03)}
+.panel-title{padding:10px 12px;font-size:0.8rem;font-weight:700;color:var(--text-dark);text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:8px;background:#f1f5f9;border-bottom:1px solid var(--border-light)}
+.panel-title i{color:var(--primary)}
+.panel-body{padding:10px 12px}
 
-.info-box {
-  background: #e0f2fe; border: 1px solid #bae6fd;
-  border-radius: 8px; padding: 10px; margin-bottom: 10px;
-}
-.info-box h4 {
-  font-size: 0.78rem; color: #0369a1; margin-bottom: 6px;
-  display: flex; align-items: center; gap: 6px;
-}
-.info-box p { font-size: 0.72rem; color: #334155; line-height: 1.4; }
-.step { display: flex; align-items: flex-start; gap: 6px; margin-top: 5px; }
-.step-n {
-  background: #0284c7; color: #fff;
-  width: 17px; height: 17px; border-radius: 50%;
-  font-size: 0.6rem; font-weight: 700;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
+.info-box{background:#e0f2fe;border:1px solid #bae6fd;border-radius:8px;padding:10px;margin-bottom:10px}
+.info-box h4{font-size:0.78rem;color:#0369a1;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.info-box p{font-size:0.72rem;color:#334155;line-height:1.4}
+.step{display:flex;align-items:flex-start;gap:6px;margin-top:5px}
+.step-n{background:#0284c7;color:#fff;width:17px;height:17px;border-radius:50%;font-size:0.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-.idx-box {
-  background: #fefce8; border: 1px solid #fde68a;
-  border-radius: 8px; padding: 10px; margin-bottom: 10px;
-}
-.idx-box h4 {
-  font-size: 0.78rem; color: #92400e; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 6px;
-}
-.idx-row {
-  display: flex; align-items: flex-start; gap: 8px;
-  padding: 7px 0; border-bottom: 1px solid #fde68a;
-}
-.idx-row:last-child { border-bottom: none; }
-.idx-icon {
-  width: 28px; height: 28px; border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; flex-shrink: 0; margin-top: 2px;
-}
-.idx-icon.ndwi { background: #dbeafe; }
-.idx-icon.mndwi { background: #e0e7ff; }
-.idx-icon.ndti { background: #fee2e2; }
-.idx-text strong { font-size: 0.72rem; color: #1e293b; display: block; }
-.idx-text span { font-size: 0.65rem; color: #64748b; line-height: 1.4; display: block; margin-top: 2px; }
+.idx-box{background:#fefce8;border:1px solid #fde68a;border-radius:8px;padding:10px;margin-bottom:10px}
+.idx-box h4{font-size:0.78rem;color:#92400e;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.idx-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid #fde68a}
+.idx-row:last-child{border-bottom:none}
+.idx-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;margin-top:2px}
+.idx-icon.ndwi{background:#dbeafe}
+.idx-icon.mndwi{background:#e0e7ff}
+.idx-icon.ndti{background:#fee2e2}
+.idx-text strong{font-size:0.72rem;color:#1e293b;display:block}
+.idx-text span{font-size:0.65rem;color:#64748b;line-height:1.4;display:block;margin-top:2px}
 
-/* REPORT COUNT */
-.report-count-box {
-  background: #fef2f2; border: 1px solid #fecaca;
-  border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;
-  display: flex; align-items: center; gap: 10px;
-}
-.report-count-num {
-  font-size: 1.3rem; font-weight: 800; color: var(--danger);
-}
-.report-count-label {
-  font-size: 0.72rem; color: #991b1b; font-weight: 600;
-}
-.report-count-sub {
-  font-size: 0.64rem; color: #64748b;
-}
+.report-count-box{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 10px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.report-count-num{font-size:1.3rem;font-weight:800;color:var(--danger)}
+.report-count-label{font-size:0.72rem;color:#991b1b;font-weight:600}
+.report-count-sub{font-size:0.64rem;color:#64748b}
 
-.layer-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 6px 0; border-bottom: 1px solid var(--border-light);
-}
-.layer-row:last-child { border-bottom: none; }
-.layer-row label {
-  font-size: 0.76rem; color: var(--text-med);
-  cursor: pointer; flex: 1; font-weight: 500;
-}
-.layer-row input[type="checkbox"],
-.layer-row input[type="radio"] {
-  accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer;
-}
-.ldot { width: 14px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.layer-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border-light)}
+.layer-row:last-child{border-bottom:none}
+.layer-row label{font-size:0.76rem;color:var(--text-med);cursor:pointer;flex:1;font-weight:500}
+.layer-row input[type="checkbox"],.layer-row input[type="radio"]{accent-color:var(--primary);width:15px;height:15px;cursor:pointer}
+.ldot{width:14px;height:8px;border-radius:2px;flex-shrink:0}
 
-.op-row {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 8px; padding-top: 6px;
-  border-top: 1px dashed var(--border-light);
-}
-.op-row label { font-size: 0.72rem; color: var(--text-muted); width: 55px; }
-.op-row input[type="range"] { flex: 1; height: 4px; accent-color: var(--primary); }
-.op-row span { font-size: 0.7rem; color: var(--text-med); width: 32px; text-align: right; }
+.op-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding-top:6px;border-top:1px dashed var(--border-light)}
+.op-row label{font-size:0.72rem;color:var(--text-muted);width:55px}
+.op-row input[type="range"]{flex:1;height:4px;accent-color:var(--primary)}
+.op-row span{font-size:0.7rem;color:var(--text-med);width:32px;text-align:right}
 
-.map-wrap { flex: 1; position: relative; background: #e2e8f0; }
-#map { width: 100%; height: 100%; }
+.map-wrap{flex:1;position:relative;background:#e2e8f0}
+#map{width:100%;height:100%}
 
-.click-banner {
-  position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
-  background: rgba(14,116,144,0.95); color: #fff;
-  padding: 10px 22px; border-radius: 30px;
-  font-size: 0.85rem; font-weight: 600;
-  z-index: 600; display: none;
-  align-items: center; gap: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-}
-.click-banner.show { display: flex; }
-.click-banner button {
-  background: rgba(255,255,255,0.2);
-  border: 1px solid rgba(255,255,255,0.4);
-  color: #fff; padding: 4px 12px; border-radius: 14px;
-  cursor: pointer; font-size: 0.74rem;
-}
+.click-banner{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(14,116,144,0.95);color:#fff;padding:10px 22px;border-radius:30px;font-size:0.85rem;font-weight:600;z-index:600;display:none;align-items:center;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,0.25)}
+.click-banner.show{display:flex}
+.click-banner button{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:#fff;padding:4px 12px;border-radius:14px;cursor:pointer;font-size:0.74rem}
 
-.coord-bar {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: rgba(255,255,255,0.9);
-  border-top: 1px solid var(--border-light);
-  padding: 4px 14px; font-size: 0.68rem;
-  color: var(--text-muted); display: flex; gap: 16px; z-index: 500;
-}
+.coord-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.9);border-top:1px solid var(--border-light);padding:4px 14px;font-size:0.68rem;color:var(--text-muted);display:flex;gap:16px;z-index:500}
 
-.modal-bg {
-  position: fixed; inset: 0;
-  background: rgba(15,23,42,0.65); backdrop-filter: blur(4px);
-  z-index: 2000; display: none;
-  align-items: center; justify-content: center; padding: 16px;
-}
-.modal-bg.show { display: flex; }
-.modal-box {
-  background: #fff; border: 1px solid var(--border);
-  border-radius: 12px; width: 650px; max-width: 95vw; max-height: 92vh;
-  overflow: hidden; display: flex; flex-direction: column;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-}
-.modal-head {
-  padding: 14px 18px; border-bottom: 1px solid var(--border-light);
-  display: flex; align-items: center; justify-content: space-between;
-  background: #f8fafc;
-}
-.modal-head h2 {
-  font-size: 0.95rem; font-weight: 700; color: var(--text-dark);
-  display: flex; align-items: center; gap: 8px;
-}
-.modal-head h2 i { color: var(--danger); }
-.modal-close {
-  background: none; border: 1px solid var(--border-light);
-  color: var(--text-muted); width: 30px; height: 30px;
-  border-radius: 6px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.modal-close:hover { background: var(--danger); color: #fff; }
-.modal-body { flex: 1; overflow-y: auto; padding: 16px; }
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal-box{background:#fff;border:1px solid var(--border);border-radius:12px;width:650px;max-width:95vw;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 15px 40px rgba(0,0,0,0.2)}
+.modal-head{padding:14px 18px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;background:#f8fafc}
+.modal-head h2{font-size:0.95rem;font-weight:700;color:var(--text-dark);display:flex;align-items:center;gap:8px}
+.modal-head h2 i{color:var(--danger)}
+.modal-close{background:none;border:1px solid var(--border-light);color:var(--text-muted);width:30px;height:30px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--danger);color:#fff}
+.modal-body{flex:1;overflow-y:auto;padding:16px}
 
-.loc-info {
-  background: #ecfdf5; border: 1px solid #a7f3d0;
-  border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 0.8rem; color: #065f46;
-}
-.loc-coords { color: #047857; font-weight: 700; }
-.copy-btn {
-  background: #10b981; border: none; color: #fff;
-  padding: 5px 12px; border-radius: 5px;
-  cursor: pointer; font-size: 0.72rem; font-weight: 600;
-}
+.loc-info{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-size:0.8rem;color:#065f46}
+.loc-coords{color:#047857;font-weight:700}
+.copy-btn{background:#10b981;border:none;color:#fff;padding:5px 12px;border-radius:5px;cursor:pointer;font-size:0.72rem;font-weight:600}
 
-.form-frame {
-  width: 100%; height: 580px;
-  border: 1px solid var(--border-light);
-  border-radius: 8px; background: #fff;
-}
+.form-frame{width:100%;height:580px;border:1px solid var(--border-light);border-radius:8px;background:#fff}
 
-.toast {
-  position: fixed; bottom: 24px; right: 24px;
-  background: #0f172a; color: #fff;
-  padding: 11px 18px; border-radius: 8px; font-size: 0.82rem;
-  display: flex; align-items: center; gap: 8px; z-index: 3000;
-  transform: translateY(120px); opacity: 0;
-  transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
+.toast{position:fixed;bottom:24px;right:24px;background:#0f172a;color:#fff;padding:11px 18px;border-radius:8px;font-size:0.82rem;display:flex;align-items:center;gap:8px;z-index:3000;transform:translateY(120px);opacity:0;transition:all 0.3s cubic-bezier(0.175,0.885,0.32,1.275)}
+.toast.show{transform:translateY(0);opacity:1}
 
-.leaflet-popup-content-wrapper {
-  background: #fff !important; color: var(--text-dark) !important;
-  border-radius: 9px !important; box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
-  border: 1px solid var(--border-light) !important;
-}
-.leaflet-popup-tip { background: #fff !important; }
-.leaflet-popup-content { margin: 12px 14px !important; font-size: 0.8rem !important; }
+.leaflet-popup-content-wrapper{background:#fff !important;color:var(--text-dark) !important;border-radius:9px !important;box-shadow:0 6px 20px rgba(0,0,0,0.12) !important;border:1px solid var(--border-light) !important}
+.leaflet-popup-tip{background:#fff !important}
+.leaflet-popup-content{margin:12px 14px !important;font-size:0.8rem !important}
 
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .header h1 { font-size: 1rem; }
-  .header p { display: none; }
+@media(max-width:768px){
+  .sidebar{display:none}
+  .header h1{font-size:1rem}
+  .header p{display:none}
 }
 </style>
 </head>
@@ -298,7 +134,6 @@ body {
       <div class="step"><span class="step-n">3</span><p>Google Form opens with <strong>location filled</strong>. Submit!</p></div>
     </div>
 
-    <!-- Community Reports Count -->
     <div class="report-count-box">
       <i class="fas fa-flag" style="font-size:1.2rem;color:#e11d48"></i>
       <div>
@@ -336,59 +171,22 @@ body {
     <div class="panel">
       <div class="panel-title"><i class="fas fa-layer-group"></i> Layers</div>
       <div class="panel-body">
-        <div class="layer-row">
-          <input type="checkbox" id="lyrCanals" checked/>
-          <label for="lyrCanals">Canal Network</label>
-          <div class="ldot" style="background:#0284c7"></div>
-        </div>
-        <div class="layer-row">
-          <input type="checkbox" id="lyrAdmin" checked/>
-          <label for="lyrAdmin">Administrative Boundaries</label>
-          <div class="ldot" style="background:#1e293b"></div>
-        </div>
-        <div class="layer-row">
-          <input type="checkbox" id="lyrMNDWI" checked/>
-          <label for="lyrMNDWI">MNDWI (Urban Water)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#d4380d,#fadb14,#1d39c4)"></div>
-        </div>
-        <div class="layer-row">
-          <input type="checkbox" id="lyrNDWI"/>
-          <label for="lyrNDWI">NDWI (Surface Water)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#ad6800,#fadb14,#1d39c4)"></div>
-        </div>
-        <div class="layer-row">
-          <input type="checkbox" id="lyrNDTI"/>
-          <label for="lyrNDTI">NDTI (Turbidity)</label>
-          <div class="ldot" style="background:linear-gradient(90deg,#003a8c,#faad14,#cf1322)"></div>
-        </div>
-        <div class="layer-row">
-          <input type="checkbox" id="lyrReports" checked/>
-          <label for="lyrReports">Pollution Reports</label>
-          <div class="ldot" style="background:#e11d48"></div>
-        </div>
-        <div class="op-row">
-          <label>Opacity</label>
-          <input type="range" id="opSlider" min="10" max="100" value="80"/>
-          <span id="opVal">80%</span>
-        </div>
+        <div class="layer-row"><input type="checkbox" id="lyrCanals" checked/><label for="lyrCanals">Canal Network</label><div class="ldot" style="background:#0284c7"></div></div>
+        <div class="layer-row"><input type="checkbox" id="lyrAdmin" checked/><label for="lyrAdmin">Administrative Boundaries</label><div class="ldot" style="background:#1e293b"></div></div>
+        <div class="layer-row"><input type="checkbox" id="lyrMNDWI" checked/><label for="lyrMNDWI">MNDWI (Urban Water)</label><div class="ldot" style="background:linear-gradient(90deg,#d4380d,#fadb14,#1d39c4)"></div></div>
+        <div class="layer-row"><input type="checkbox" id="lyrNDWI"/><label for="lyrNDWI">NDWI (Surface Water)</label><div class="ldot" style="background:linear-gradient(90deg,#ad6800,#fadb14,#1d39c4)"></div></div>
+        <div class="layer-row"><input type="checkbox" id="lyrNDTI"/><label for="lyrNDTI">NDTI (Turbidity)</label><div class="ldot" style="background:linear-gradient(90deg,#003a8c,#faad14,#cf1322)"></div></div>
+        <div class="layer-row"><input type="checkbox" id="lyrReports" checked/><label for="lyrReports">Pollution Reports</label><div class="ldot" style="background:#e11d48"></div></div>
+        <div class="op-row"><label>Opacity</label><input type="range" id="opSlider" min="10" max="100" value="80"/><span id="opVal">80%</span></div>
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-title"><i class="fas fa-map"></i> Base Map</div>
       <div class="panel-body">
-        <div class="layer-row">
-          <input type="radio" name="bm" value="osm" checked id="bm_osm"/>
-          <label for="bm_osm">OpenStreetMap</label>
-        </div>
-        <div class="layer-row">
-          <input type="radio" name="bm" value="satellite" id="bm_sat"/>
-          <label for="bm_sat">Satellite (Esri)</label>
-        </div>
-        <div class="layer-row">
-          <input type="radio" name="bm" value="street" id="bm_street"/>
-          <label for="bm_street">Street Map (Esri)</label>
-        </div>
+        <div class="layer-row"><input type="radio" name="bm" value="osm" checked id="bm_osm"/><label for="bm_osm">OpenStreetMap</label></div>
+        <div class="layer-row"><input type="radio" name="bm" value="satellite" id="bm_sat"/><label for="bm_sat">Satellite (Esri)</label></div>
+        <div class="layer-row"><input type="radio" name="bm" value="street" id="bm_street"/><label for="bm_street">Street Map (Esri)</label></div>
       </div>
     </div>
 
@@ -445,67 +243,24 @@ var FORM_BASE = 'https://docs.google.com/forms/d/e/' + FORM_ID + '/viewform?embe
 var ENTRY_LAT = 'entry.1267784781';
 var ENTRY_LNG = 'entry.2040321760';
 
-// ============================================================
-// ⚠️ REPLACE THIS URL WITH YOUR PUBLISHED GOOGLE SHEET CSV URL
-// ============================================================
-// Steps to get this URL:
-// 1. Open the Google Sheet linked to your form responses
-// 2. Click File → Share → Publish to web
-// 3. Select Sheet1 → CSV → Publish
-// 4. Copy the URL and paste it below
+// Your Google Sheet CSV URL (published to web)
+// Cache-buster is added at request time so refreshes always fetch new data
 var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRF80glRsS2_Pk00NjB28DJ0XmdfrT2_punPRyjGK3F9hZiN3lx7VCbsCiE9e7kzrl57X39DwIoWzXD/pub?output=csv';
 
-// How often to refresh reports (in milliseconds)
-// 120000 = 2 minutes
-var REFRESH_INTERVAL = 120000;
-
-// ============================================================
-// ⚠️ COLUMN NAME MAPPING
-// ============================================================
-// Check your Google Sheet column headers and update these
-// to match EXACTLY what your sheet shows
-//
-// Open your Google Sheet and look at Row 1 (the header row)
-// Then update the names below to match
-var COL = {
-  timestamp: 'Timestamp',          // Usually auto-created by Google Forms
-  lat: 'Latitude',                 // Your latitude column name
-  lng: 'Longitude',                // Your longitude column name
-  time: 'Time',                    // Time field
-  date: 'Date',                    // Date field
-  pollutionType: 'Pollution Type', // Pollution type field
-  severity: 'Severity Level',      // Severity field
-  description: 'Description'       // Any notes/description field
-};
+var REFRESH_INTERVAL = 120000; // 2 minutes
 
 // ============================================================
 // STATE
 // ============================================================
-var map;
-var clickMode = false;
-var clickMarker = null;
-var layers = {};
-var reportData = [];
+var map, clickMode = false, clickMarker = null, layers = {}, reportData = [];
 
 // Color scales
-var MNDWI_SCALE = [
-  {v:-1.0, c:'#d4380d'}, {v:-0.1, c:'#fa541c'},
-  {v:0.0, c:'#fadb14'}, {v:0.2, c:'#69c0ff'},
-  {v:0.5, c:'#1d39c4'}, {v:1.0, c:'#0a1f6b'}
-];
-var NDWI_SCALE = [
-  {v:-1.0, c:'#ad6800'}, {v:-0.1, c:'#d48806'},
-  {v:0.0, c:'#fadb14'}, {v:0.2, c:'#69c0ff'},
-  {v:0.5, c:'#1d39c4'}, {v:1.0, c:'#0a1f6b'}
-];
-var NDTI_SCALE = [
-  {v:-1.0, c:'#003a8c'}, {v:-0.1, c:'#40a9ff'},
-  {v:0.0, c:'#fff566'}, {v:0.15, c:'#faad14'},
-  {v:0.3, c:'#d4380d'}, {v:1.0, c:'#820014'}
-];
+var MNDWI_SCALE = [{v:-1,c:'#d4380d'},{v:-0.1,c:'#fa541c'},{v:0,c:'#fadb14'},{v:0.2,c:'#69c0ff'},{v:0.5,c:'#1d39c4'},{v:1,c:'#0a1f6b'}];
+var NDWI_SCALE  = [{v:-1,c:'#ad6800'},{v:-0.1,c:'#d48806'},{v:0,c:'#fadb14'},{v:0.2,c:'#69c0ff'},{v:0.5,c:'#1d39c4'},{v:1,c:'#0a1f6b'}];
+var NDTI_SCALE  = [{v:-1,c:'#003a8c'},{v:-0.1,c:'#40a9ff'},{v:0,c:'#fff566'},{v:0.15,c:'#faad14'},{v:0.3,c:'#d4380d'},{v:1,c:'#820014'}];
 
 // ============================================================
-// COLOR HELPERS
+// HELPERS
 // ============================================================
 function lerpColor(a, b, t) {
   var ah = parseInt(a.slice(1),16), bh = parseInt(b.slice(1),16);
@@ -547,6 +302,54 @@ function getMeaning(field, v) {
     return '🔵 Clear water';
   }
   return '';
+}
+
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show');
+  setTimeout(function() { el.classList.remove('show'); }, 3200);
+}
+
+// ============================================================
+// SMART COLUMN FINDER — finds coordinates in any column
+// ============================================================
+function findValue(row, keywords) {
+  // Try to find a column whose name contains any of the keywords
+  var keys = Object.keys(row);
+  for (var i = 0; i < keys.length; i++) {
+    var keyLower = keys[i].toLowerCase();
+    for (var j = 0; j < keywords.length; j++) {
+      if (keyLower.indexOf(keywords[j]) !== -1) {
+        return row[keys[i]];
+      }
+    }
+  }
+  return null;
+}
+
+function extractCoordinates(row) {
+  // Try many possible names for latitude
+  var lat = findValue(row, ['latitude', 'lat']);
+  // Try many possible names for longitude
+  var lng = findValue(row, ['longitude', 'lng', 'lon']);
+
+  // Parse to number
+  lat = parseFloat(lat);
+  lng = parseFloat(lng);
+
+  // Handle common issue: user typed lat as longitude or vice-versa
+  // Western Province: lat ~6-7, lng ~79-80
+  if (!isNaN(lat) && !isNaN(lng)) {
+    // If lat looks like a Sri Lankan longitude, swap
+    if (lat > 70 && lat < 85 && lng > 5 && lng < 10) {
+      var tmp = lat;
+      lat = lng;
+      lng = tmp;
+    }
+    return { lat: lat, lng: lng };
+  }
+  return null;
 }
 
 // ============================================================
@@ -606,6 +409,8 @@ function closeModal() {
   document.getElementById('reportModal').classList.remove('show');
   document.getElementById('gformFrame').src = 'about:blank';
   if (clickMarker) { map.removeLayer(clickMarker); clickMarker = null; }
+  // Refresh reports after closing form (in case user submitted)
+  setTimeout(loadCommunityReports, 3000);
 }
 function copyCoords() {
   var t = document.getElementById('modalCoords').textContent;
@@ -622,44 +427,44 @@ function cancelClick() {
   document.getElementById('clickBanner').classList.remove('show');
   map.getContainer().style.cursor = '';
 }
-function showToast(msg) {
-  var el = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  el.classList.add('show');
-  setTimeout(function() { el.classList.remove('show'); }, 3200);
-}
 
 // ============================================================
 // LOAD COMMUNITY REPORTS FROM GOOGLE SHEET
 // ============================================================
 function loadCommunityReports() {
-  if (SHEET_CSV_URL === 'YOUR_SHEET_CSV_URL') {
-    console.log('⚠️ No Google Sheet URL set. Update SHEET_CSV_URL in the code.');
-    console.log('   Reports layer will be empty until you set the URL.');
-    document.getElementById('reportCount').textContent = '0';
-    return;
-  }
+  // Add cache-buster to force fresh fetch every time
+  var url = SHEET_CSV_URL + '&_cb=' + new Date().getTime();
 
-  Papa.parse(SHEET_CSV_URL, {
+  Papa.parse(url, {
     download: true,
     header: true,
-    dynamicTyping: true,
+    dynamicTyping: false,
     skipEmptyLines: true,
     complete: function(results) {
-      // Filter rows that have valid lat/lng
-      reportData = results.data.filter(function(row) {
-        // Try multiple possible column names for latitude
-        var lat = row[COL.lat] || row['Latitude'] || row['latitude'] || row['lat'];
-        var lng = row[COL.lng] || row['Longitude'] || row['longitude'] || row['lng'];
-        return lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng));
+      console.log('📊 Sheet loaded. Rows:', results.data.length);
+      if (results.data.length > 0) {
+        console.log('📋 Column names in your sheet:', Object.keys(results.data[0]));
+      }
+
+      // Filter rows with valid coordinates
+      reportData = [];
+      results.data.forEach(function(row, i) {
+        var coords = extractCoordinates(row);
+        if (coords) {
+          row._lat = coords.lat;
+          row._lng = coords.lng;
+          reportData.push(row);
+        } else {
+          console.log('⚠️ Row ' + (i+1) + ' skipped — no valid coordinates found');
+        }
       });
 
-      console.log('✅ Community reports loaded: ' + reportData.length + ' entries');
+      console.log('✅ Valid reports with coordinates:', reportData.length);
       renderReports();
     },
     error: function(err) {
-      console.log('⚠️ Could not load Google Sheet. Check the URL.');
-      console.log('   Error: ' + err.message);
+      console.error('❌ Could not load Google Sheet:', err);
+      showToast('Could not load reports from sheet');
     }
   });
 }
@@ -670,90 +475,78 @@ function renderReports() {
   var markers = [];
 
   reportData.forEach(function(row, index) {
-    // Get coordinates - try multiple possible column names
-    var lat = parseFloat(row[COL.lat] || row['Latitude'] || row['latitude'] || row['lat']);
-    var lng = parseFloat(row[COL.lng] || row['Longitude'] || row['longitude'] || row['lng']);
+    var lat = row._lat;
+    var lng = row._lng;
 
-    if (isNaN(lat) || isNaN(lng)) return;
+    // Extract all other details using flexible column detection
+    var timestamp = findValue(row, ['timestamp']) || '';
+    var pollType = findValue(row, ['pollution type', 'pollution', 'type']) || 'Not specified';
+    var severity = findValue(row, ['severity']) || 'Not specified';
+    var desc = findValue(row, ['description', 'details', 'notes', 'comment']) || '';
+    var time = findValue(row, ['time']) || '';
+    var date = findValue(row, ['date']) || '';
+    var canal = findValue(row, ['canal', 'location name']) || '';
 
-    // Get other details - try multiple possible names
-    var timestamp = row[COL.timestamp] || row['Timestamp'] || '';
-    var pollType = row[COL.pollutionType] || row['Pollution Type'] || row['pollution_type'] || 'Not specified';
-    var severity = row[COL.severity] || row['Severity Level'] || row['severity'] || 'Not specified';
-    var desc = row[COL.description] || row['Description'] || row['description'] || row['Notes'] || '';
-    var time = row[COL.time] || row['Time'] || row['time'] || '';
-    var date = row[COL.date] || row['Date'] || row['date'] || '';
-
-    // Determine marker color based on severity
-    var color = '#f59e0b'; // default yellow/medium
-    var sevLower = severity.toString().toLowerCase();
+    // Color based on severity
+    var color = '#f59e0b';
+    var sevLower = String(severity).toLowerCase();
     if (sevLower.indexOf('high') !== -1 || sevLower.indexOf('severe') !== -1) {
       color = '#e11d48';
     } else if (sevLower.indexOf('low') !== -1 || sevLower.indexOf('minor') !== -1) {
       color = '#10b981';
     }
 
-    // Create marker
     var marker = L.circleMarker([lat, lng], {
-      radius: 8,
+      radius: 9,
       fillColor: color,
       color: '#fff',
       weight: 2.5,
       fillOpacity: 0.9
     });
 
-    // Build popup content
-    var popupHtml =
-      '<div style="min-width:200px">' +
-      '<div style="font-weight:700;font-size:0.88rem;color:#e11d48;margin-bottom:6px">' +
-      '⚠️ Pollution Report #' + (index + 1) +
-      '</div>';
+    // Build popup
+    var html = '<div style="min-width:210px">';
+    html += '<div style="font-weight:700;font-size:0.88rem;color:' + color + ';margin-bottom:6px">';
+    html += '⚠️ Pollution Report #' + (index + 1) + '</div>';
 
+    if (canal) {
+      html += '<div style="font-size:0.76rem;margin-bottom:4px"><strong>📍 Canal:</strong> ' + canal + '</div>';
+    }
     if (pollType && pollType !== 'Not specified') {
-      popupHtml += '<div style="font-size:0.76rem;margin-bottom:4px">' +
-        '<strong>Type:</strong> ' + pollType + '</div>';
+      html += '<div style="font-size:0.76rem;margin-bottom:4px"><strong>Type:</strong> ' + pollType + '</div>';
     }
     if (severity && severity !== 'Not specified') {
-      popupHtml += '<div style="font-size:0.76rem;margin-bottom:4px">' +
-        '<strong>Severity:</strong> <span style="color:' + color + ';font-weight:700">' + severity + '</span></div>';
+      html += '<div style="font-size:0.76rem;margin-bottom:4px"><strong>Severity:</strong> ';
+      html += '<span style="color:' + color + ';font-weight:700">' + severity + '</span></div>';
     }
-    if (date) {
-      popupHtml += '<div style="font-size:0.72rem;color:#64748b;margin-bottom:3px">' +
-        '📅 ' + date + (time ? ' at ' + time : '') + '</div>';
+    if (date || time) {
+      html += '<div style="font-size:0.72rem;color:#64748b;margin-bottom:3px">📅 ' + date;
+      if (time) html += ' at ' + time;
+      html += '</div>';
     }
     if (desc) {
-      popupHtml += '<div style="font-size:0.72rem;color:#334155;margin-top:5px;padding:5px 7px;background:#f1f5f9;border-radius:4px">' +
-        '📝 ' + desc + '</div>';
+      html += '<div style="font-size:0.72rem;color:#334155;margin-top:5px;padding:5px 7px;background:#f1f5f9;border-radius:4px">📝 ' + desc + '</div>';
     }
     if (timestamp) {
-      popupHtml += '<div style="font-size:0.62rem;color:#94a3b8;margin-top:5px">' +
-        'Submitted: ' + timestamp + '</div>';
+      html += '<div style="font-size:0.62rem;color:#94a3b8;margin-top:5px">Submitted: ' + timestamp + '</div>';
     }
+    html += '<div style="font-size:0.65rem;color:#64748b;margin-top:5px">🗺️ ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E</div>';
+    html += '</div>';
 
-    popupHtml +=
-      '<div style="font-size:0.65rem;color:#64748b;margin-top:5px">' +
-      '📍 ' + lat.toFixed(5) + '°N, ' + lng.toFixed(5) + '°E' +
-      '</div>' +
-      '</div>';
-
-    marker.bindPopup(popupHtml);
+    marker.bindPopup(html);
     markers.push(marker);
   });
 
   layers.reports = L.layerGroup(markers);
 
-  // Add to map if checkbox is checked
   var chk = document.getElementById('lyrReports');
-  if (chk && chk.checked) {
-    map.addLayer(layers.reports);
-  }
+  if (chk && chk.checked) map.addLayer(layers.reports);
 
-  // Update count
   document.getElementById('reportCount').textContent = reportData.length;
 }
 
 // ============================================================
-// LOAD INDEX CSV
+// LOAD CSV INDEX
 // ============================================================
 function loadCSV(filename, field, scale, layerKey, checkboxId) {
   Papa.parse('data/' + filename, {
@@ -819,7 +612,7 @@ function loadGeoJSON(filename, layerKey, styleFn, featureFn, checkboxId) {
 }
 
 // ============================================================
-// LAYER TOGGLES & OPACITY
+// TOGGLES & OPACITY
 // ============================================================
 function setupToggles() {
   var m = { lyrCanals:'canals', lyrAdmin:'admin', lyrMNDWI:'mndwi', lyrNDWI:'ndwi', lyrNDTI:'ndti', lyrReports:'reports' };
@@ -855,7 +648,7 @@ function init() {
     if (e.target.id === 'reportModal') closeModal();
   });
 
-  // Load canals
+  // Canals
   loadGeoJSON('canals.geojson', 'canals',
     function(f) {
       var c = (f.properties||{}).condition||'';
@@ -875,7 +668,7 @@ function init() {
     'lyrCanals'
   );
 
-  // Load admin boundaries (dark color)
+  // Admin (dark)
   loadGeoJSON('admin_boundaries.geojson', 'admin',
     function(f) {
       var lv = (f.properties||{}).level||(f.properties||{}).Level||'';
@@ -891,19 +684,19 @@ function init() {
     'lyrAdmin'
   );
 
-  // Load indices
+  // Indices
   loadCSV('mndwi.csv', 'mndwi', MNDWI_SCALE, 'mndwi', 'lyrMNDWI');
   loadCSV('ndwi.csv', 'ndwi', NDWI_SCALE, 'ndwi', 'lyrNDWI');
   loadCSV('ndti.csv', 'ndti', NDTI_SCALE, 'ndti', 'lyrNDTI');
 
-  // Load community reports from Google Sheet
+  // Community reports from Google Sheet
   loadCommunityReports();
 
-  // Auto-refresh reports every 2 minutes
+  // Auto-refresh every 2 minutes
   setInterval(loadCommunityReports, REFRESH_INTERVAL);
 
-  console.log('✅ Map ready!');
-  console.log('📋 Community reports auto-refresh every 2 minutes from Google Sheet');
+  console.log('✅ Map ready! Reports refresh every 2 minutes.');
+  console.log('💡 If reports don\'t show, open browser console (F12) to see column names in your sheet.');
 }
 
 document.addEventListener('DOMContentLoaded', init);
